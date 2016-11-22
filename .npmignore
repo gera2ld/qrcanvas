@@ -1,0 +1,6 @@
+src
+scripts
+gulpfile.js
+snapshots
+*.log
+*.lock

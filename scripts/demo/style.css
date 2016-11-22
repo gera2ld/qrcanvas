@@ -1,0 +1,70 @@
+body {
+  background: #eee;
+}
+* {
+  box-sizing: border-box;
+}
+.panel {
+  display: inline-block;
+  width: 300px;
+  margin-right: 10px;
+  vertical-align: top;
+}
+#qrcanvas {
+  display: inline-block;
+  vertical-align: top;
+}
+.group {
+  margin-bottom: .4em;
+}
+.group > .content {
+  display: block;
+  margin-left: 90px;
+}
+.group > small {
+  float: left;
+  width: 90px;
+}
+.input > * {
+  width: 100%;
+}
+.input-labels {
+  text-align-last: justify;
+}
+.tabs > * {
+  display: inline-block;
+}
+.tab:not(.active) {
+  display: none;
+}
+#cblogo:not(:checked) ~ .logo-header {
+  display: none;
+}
+.logo-header > * {
+  display: inline-block;
+  padding: .3em;
+  border: 1px solid #aaa;
+  border-bottom: none;
+  background: #eee;
+  color: gray;
+  cursor: pointer;
+}
+.logo-header > .active {
+  background: wheat;
+  color: black;
+}
+.logo-body {
+  display: block;
+  padding: .4em;
+  border: 1px solid #aaa;
+  background: wheat;
+}
+#cblogo:not(:checked) ~ .logo-body {
+  display: none;
+}
+#effect > [value=none]:checked ~ .input {
+  display: none;
+}
+#effect > :not([value=image]):checked ~ .input > .effect-image {
+  display: none;
+}

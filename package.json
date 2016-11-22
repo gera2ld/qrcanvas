@@ -1,0 +1,36 @@
+{
+  "name": "qrcanvas",
+  "version": "1.0.0",
+  "title": "QRCanvas",
+  "description": "Generate characteristic qrcodes with a canvas.",
+  "author": "Gerald <i@gerald.top>",
+  "license": "ISC",
+  "browser": "dist/qrcanvas.js",
+  "main": "dist/qrcanvas.node.js",
+  "typings": "types/index.d.ts",
+  "scripts": {
+    "dev": "gulp watch",
+    "build": "rm -rf dist && gulp build",
+    "lint": "gulp lint",
+    "deploy": "sh scripts/build-gh.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:gera2ld/qrcanvas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gera2ld/qrcanvas/issues"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clone": "^1.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-header": "^1.8.8",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.4",
+    "gulp-uglify": "^2.0.0",
+    "gulp-wrap": "^0.13.0",
+    "merge2": "^1.0.2"
+  }
+}

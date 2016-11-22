@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+  <title>QRCanvas</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="qrcanvas.js"></script>
+</head>
+<body>
+  <a href="https://github.com/gera2ld/qrcanvas"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a>
+  <h1>QRCode Generator</h1>
+  <div class="panel">
+    <div class="group">
+      <small>Text:</small>
+      <div class="input content">
+        <textarea id="qrtext">https://gerald.top</textarea>
+      </div>
+    </div>
+    <div class="group">
+      <small>Size:</small>
+      <div class="input content">
+        <input id="cellSize" type=range min=2 max=10 value=6>
+      </div>
+    </div>
+    <div class="group">
+      <small>Effect:</small>
+      <div class="content" id="effect">
+        <input type=radio name="effect-type" value="none" checked> None<br>
+        <input type=radio name="effect-type" value="liquid"> Liquid<br>
+        <input type=radio name="effect-type" value="round"> Round<br>
+        <input type=radio name="effect-type" value="image"> Image<br>
+        <div class="input">
+          <input id="effect-value" type=range min=0 max=100 step=5 value=100>
+          <img id="effect-img" class="effect-image" src="iloveme.jpg">
+          <input type=file id="effect-file" class="effect-image">
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <small>Colors:</small>
+      <div class="content">
+        <div class="input group">
+          Foreground
+          <input id=colorFore type=color value=#4169e1>
+        </div>
+        <div class="input group">
+          Background
+          <input id=colorBack type=color value=#ffffff>
+        </div>
+        <div class="input group">
+          Outside-border
+          <input id=colorOut type=color value=#cd5c5c>
+        </div>
+        <div class="input group">
+          Inside-border
+          <input id=colorIn type=color value=#191970>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <small>Type number:</small>
+      <div class="input content">
+        <input id=typeNumber type=range min=1 max=10 step=1 value=1>
+      </div>
+    </div>
+    <div class="group tabs">
+      <input id=cblogo type=checkbox>
+      <label for=cblogo>Add Logo</label>
+      <div class="logo-header">
+        <span data-type="image">Image</span>
+        <span data-type="text">Text</span>
+      </div>
+      <div class="logo-body">
+        <div class="tab" data-type="image">
+          <div class="group">
+            <small>Image:</small>
+            <img id=logoImg src=iloveme.jpg>
+            <div class="input content">
+              <input id=fimg type=file>
+            </div>
+          </div>
+        </div>
+        <div class="tab" data-type="text">
+          <div class="group">
+            <small>Text:</small>
+            <div class="input content">
+              <input id=logoText>
+            </div>
+          </div>
+          <div class="group">
+            <small>Font:</small>
+            <div class="input content">
+              <input id=logoFont placeholder="CSS font string">
+            </div>
+          </div>
+          <div class="group">
+            <label>Color: <input id=logoColor type=color></label>
+            <label><input id=logoBold type=checkbox>Bold</label>
+            <label><input id=logoItalic type=checkbox>Italic</label>
+          </div>
+        </div>
+        <div class="group">
+          <small>Size:</small>
+          <div class="input content">
+            <input id="logoSize" type=range min=5 max=20 value=15>
+          </div>
+        </div>
+        <div class="group">
+          <small>Clear edges:</small>
+          <div class="input content">
+            <input id="qrclearedges" type=range min=0 max=2 value=0>
+          </div>
+        </div>
+        <div class="group">
+          <small>Margin:</small>
+          <div class="input content">
+            <input id="logoMargin" type=range min=0 max=10 value=0>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <button id=qrgen>Make</button>
+      <a target=_blank href="https://github.com/gera2ld/qrcanvas/wiki">Wiki</a>
+    </div>
+  </div>
+  <div id=qrcanvas></div>
+  <script src=index.js></script>
+</body>
+</html>
