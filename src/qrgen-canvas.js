@@ -88,7 +88,7 @@ var utils = function () {
   function merge() {
     var res = [];
     forEach(arguments, function (arg) {
-      res = res.concat(arg);
+      if (arg) res = res.concat(arg);
     });
     return res;
   }
