@@ -5,14 +5,17 @@
  */
 
 var utils = function () {
-  var createCanvas;
+  var createCanvas, isDrawable;
   if (process.env.BROWSER) {
     createCanvas = function () {return document.createElement('canvas');};
+    isDrawable = function (e) {return e instanceof HTMLElement;};
   } else {
     var Canvas = require('canvas');
     createCanvas = function () {return new Canvas;};
+    isDrawable = function (e) {return e instanceof Canvas;};
   }
   return {
+    isDrawable: isDrawable,
     getCanvas: getCanvas,
     drawCanvas: drawCanvas,
     forEach: forEach,
@@ -47,7 +50,7 @@ var utils = function () {
       var ctx = canvas.getContext('2d');
       if (!Array.isArray(data)) data = [data];
       forEach(data, function (item) {
-        if (item instanceof HTMLElement) {
+        if (utils.isDrawable(item)) {
           ctx.drawImage(item, 0, 0, canvas.width, canvas.height);
         } else {
           var x, y, w, h;
