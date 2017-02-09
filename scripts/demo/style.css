@@ -62,9 +62,12 @@ body {
 #cblogo:not(:checked) ~ .logo-body {
   display: none;
 }
-#effect > [value=none]:checked ~ .input {
+#effect-none:checked ~ .input {
   display: none;
 }
-#effect > :not([value=image]):checked ~ .input > .effect-image {
+.effect-image {
   display: none;
+}
+#effect-image:checked ~ .input > .effect-image {
+  display: block;
 }
