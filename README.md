@@ -12,38 +12,43 @@ Based on [Kazuhiko Arase's QRCode](http://www.d-project.com/).
 The only requirement is that the browser works with a `canvas`,
 which is supported by most modern browsers.
 
-Quick start
+Installation
 ---
-* Installation
 
 ``` sh
 $ npm i qrcanvas
 ```
 
+Quick Start
+---
+
 * Use in browser
 
-``` html
-<div id="qrcode"></div>
-<script src="dist/qrcanvas.js"></script>
-```
+  ``` html
+  <div id="qrcode"></div>
+  <script src="dist/qrcanvas.js"></script>
+  ```
 
-``` js
-var canvas = qrcanvas({
-  data: 'hello, world'
-});
-document.getElementById('qrcode').appendChild(canvas);
-```
+  ``` js
+  var canvas = qrcanvas({
+    data: 'hello, world'
+  });
+  document.getElementById('qrcode').appendChild(canvas);
+  ```
 
 * Use in Node.js
 
-``` js
-const fs = require('fs');
-const qrcanvas = require('qrcanvas');
-const canvas = qrcanvas({
-  data: 'hello, world'
-});
-canvas.pngStream().pipe(fs.createWriteStream('qrcode.png'));
-```
+  [node-canvas](https://github.com/Automattic/node-canvas) is required in Node.js.
+
+  ``` js
+  const fs = require('fs');
+  const qrcanvas = require('qrcanvas');
+  const canvas = qrcanvas({
+    data: 'hello, world'
+  });
+  // canvas is an instance of `node-canvas`
+  canvas.pngStream().pipe(fs.createWriteStream('qrcode.png'));
+  ```
 
 More
 ---
