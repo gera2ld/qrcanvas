@@ -26,7 +26,7 @@ Quick Start
 
   ``` html
   <div id="qrcode"></div>
-  <script src="dist/qrcanvas.js"></script>
+  <script src="lib/qrcanvas.js"></script>
   ```
 
   ``` js
