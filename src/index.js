@@ -83,9 +83,9 @@ const defaultLogoOptions = () => ({
 
 class QRCanvas {
   constructor(options) {
-    this.setOptions(options || {});
     this.events = new EventEmitter();
     applyPlugins(this);
+    this.setOptions(options || {});
   }
 
   setOptions(userOptions) {
@@ -140,7 +140,7 @@ class QRCanvas {
   isDark = (i, j) => {
     const { count, qr } = this.qrdata;
     return i >= 0 && i < count && j >= 0 && j < count
-    && this.shouldTransclude(i * count + j)
+    && this.shouldTransclude(i + j * count)
     && qr.isDark(i, j);
   }
 
@@ -195,7 +195,11 @@ class QRCanvas {
       width = measureText(logo.text, font).width;
       normalize();
       const ctx = logo.canvas.getContext('2d');
-      ctx.font = font;
+      ctx.font = [
+        logo.fontStyle,
+        `${logo.height}px`,
+        logo.fontFamily,
+      ].filter(Boolean).join(' ');
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = logo.color;
@@ -249,8 +253,8 @@ class QRCanvas {
           image: logo.canvas,
           x: logo.x,
           y: logo.y,
-          width: logo.width,
-          height: logo.height,
+          width: logo.width + 2 * logo.margin,
+          height: logo.height + 2 * logo.margin,
         },
       ].filter(Boolean),
     });

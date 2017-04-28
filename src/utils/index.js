@@ -45,7 +45,7 @@ export function drawCanvas(canvas, options) {
       const w = (('cols' in obj) ? obj.cols * cellSize : obj.width) || size;
       const h = (('rows' in obj) ? obj.rows * cellSize : obj.height) || size;
       if (obj.image) {
-        ctx.drawImage(item, x, y, w, h);
+        ctx.drawImage(obj.image, x, y, w, h);
       } else {
         ctx.fillStyle = obj.style || 'black';
         ctx.fillRect(x, y, w, h);

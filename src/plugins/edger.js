@@ -97,7 +97,6 @@ function initBgData({ canvas, isBackgroundColor, margin }) {
  */
 function bgChecker(bgData, width, height, level) {
   const isBackground = (...args) => {
-    if (level === 3) return false;
     let index;
     if (args.length === 1) {
       [index] = args;
@@ -119,6 +118,7 @@ function bgChecker(bgData, width, height, level) {
     } else {
       throw Error('Invalid index');
     }
+    if (level === 3) return false;
     return bgData[index] === 1;
   };
   return isBackground;
