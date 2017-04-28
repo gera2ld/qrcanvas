@@ -158,12 +158,18 @@ function getEdger({ canvas, margin = 0, level }) {
    */
   const isBackgroundColor = colorArr => !colorArr[3]; // alpha is 0
 
-  const bgData = initBgData({ canvas, margin, isBackgroundColor });
+  let bgData;
+  try {
+    bgData = initBgData({ canvas, margin, isBackgroundColor });
+  } catch (e) {
+    // The canvas has been tainted by cross-origin data.
+  }
+  if (!bgData) return {};
+
   const { width, height } = canvas;
   const isBackground = bgChecker(bgData, width, height, level);
   const clearBackground = bgClearer(isBackground, width, height);
-
-  return { isBackground, clearBackground };
+  return { enabled: true, isBackground, clearBackground };
 }
 
 /**
@@ -174,19 +180,24 @@ function getEdger({ canvas, margin = 0, level }) {
  * - 3: clear a square area covered by logo image
  */
 const plugin = qrcanvas => {
-  const {
-    events,
-    options: { logo },
-    qrdata: { count, cellSize },
-  } = qrcanvas;
+  const { events } = qrcanvas;
   let transclude = {};
   let edger;
   events.on('detectEdges', () => {
+    const {
+      options: { logo },
+      qrdata: { count, cellSize },
+    } = qrcanvas;
     edger = getEdger({
       canvas: logo.canvas,
       margin: logo.margin,
       level: logo.clearEdges,
     });
+
+    if (!edger.enabled) {
+      console.warn('[QRCanvas] The canvas has been tainted by cross-origin data, plugin `edger` disabled.');
+      return;
+    }
 
     // Clear cells broken by the logo (incomplete cells)
     if (logo.clearEdges > 1) {
@@ -205,7 +216,8 @@ const plugin = qrcanvas => {
     }
   });
   events.on('clearLogo', ({ canvas }) => {
-    if (!logo.clearEdges) return;
+    const { options: { logo } } = qrcanvas;
+    if (!logo.clearEdges || !edger.enabled) return;
     if ((logo.image || logo.text) && logo.clearEdges === 1) {
       const canvasLogo = getCanvas(logo.width + 2 * logo.margin, logo.height + 2 * logo.margin);
       const ctxLogo = canvasLogo.getContext('2d');
@@ -218,6 +230,7 @@ const plugin = qrcanvas => {
     }
   });
   qrcanvas.shouldTransclude = index => {
+    const { options: { logo } } = qrcanvas;
     if (logo.clearEdges > 1) return transclude[index];
     return true;
   };
