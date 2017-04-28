@@ -26,7 +26,11 @@ Quick Start
 
   ``` html
   <div id="qrcode"></div>
+
   <script src="lib/qrcanvas.js"></script>
+
+  <!-- You can use a slim version if no effects are wanted. -->
+  <script src="lib/qrcanvas.slim.js"></script>
   ```
 
   ``` js

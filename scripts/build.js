@@ -6,7 +6,7 @@ const replace = require('rollup-plugin-replace');
 [
   {
     entry: 'src/index.js',
-    dest: 'lib/qrcanvas.node.js',
+    dest: 'dist/qrcanvas.node.js',
     format: 'cjs',
     plugins: [
       babel({
@@ -34,7 +34,7 @@ const replace = require('rollup-plugin-replace');
   },
   {
     entry: 'src/index.js',
-    dest: 'lib/qrcanvas.js',
+    dest: 'dist/qrcanvas.js',
     format: 'umd',
     moduleName: 'qrcanvas',
     plugins: [
@@ -58,7 +58,7 @@ const replace = require('rollup-plugin-replace');
   },
   {
     entry: 'src/index.js',
-    dest: 'lib/qrcanvas.slim.js',
+    dest: 'dist/qrcanvas.slim.js',
     format: 'umd',
     moduleName: 'qrcanvas',
     plugins: [

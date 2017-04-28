@@ -1,2 +1,2 @@
-cp -r scripts/demo .
+cp -r scripts/demo dist
 npm run build

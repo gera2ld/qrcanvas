@@ -5,8 +5,8 @@
   "description": "Generate characteristic qrcodes with a canvas.",
   "author": "Gerald <i@gerald.top>",
   "license": "ISC",
-  "browser": "lib/qrcanvas.js",
-  "main": "lib/qrcanvas.node.js",
+  "browser": "dist/qrcanvas.js",
+  "main": "dist/qrcanvas.node.js",
   "typings": "types/index.d.ts",
   "scripts": {
     "build": "node scripts/build",
