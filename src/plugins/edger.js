@@ -159,12 +159,14 @@ function getEdger({ canvas, margin = 0, level }) {
   const isBackgroundColor = colorArr => !colorArr[3]; // alpha is 0
 
   let bgData;
-  try {
-    bgData = initBgData({ canvas, margin, isBackgroundColor });
-  } catch (e) {
-    // The canvas has been tainted by cross-origin data.
+  if (level && level < 3) {
+    try {
+      bgData = initBgData({ canvas, margin, isBackgroundColor });
+    } catch (e) {
+      // The canvas has been tainted by cross-origin data.
+    }
+    if (!bgData) return {};
   }
-  if (!bgData) return {};
 
   const { width, height } = canvas;
   const isBackground = bgChecker(bgData, width, height, level);
