@@ -104,12 +104,65 @@
     };
     reader.readAsDataURL(file);
   }
+  function resetValues() {
+    var defaults = {
+      qrtext: 'https://gerald.top',
+      cellSize: 6,
+      effectValue: 100,
+      colorFore: '#4169e1',
+      colorBack: '#ffffff',
+      colorOut: '#cd5c5c',
+      colorIn: '#191970',
+      typeNumber: 1,
+      logoSize: 15,
+      logoClearEdges: 1,
+      logoMargin: 0,
+    };
+    [
+      'qrtext',
+      'cellSize',
+      'effectValue',
+      'colorFore',
+      'colorBack',
+      'colorOut',
+      'colorIn',
+      'typeNumber',
+      'cblogo',
+      'logoText',
+      'logoFont',
+      'logoColor',
+      'logoBold',
+      'logoItalic',
+      'logoSize',
+      'logoClearEdges',
+      'logoMargin',
+    ].forEach(function (key) {
+      var el = $('#' + key);
+      var def = defaults[key];
+      if (typeof def === 'undefined') def = null;
+      var value = def;
+      try {
+        var raw = localStorage.getItem(key);
+        if (raw) value = JSON.parse(raw);
+      } catch (e) {}
+      el.value = value;
+      el.onchange = el.oninput = function () {
+        var value = el.value;
+        if (value) {
+          localStorage.setItem(key, JSON.stringify(value));
+        } else {
+          localStorage.removeItem(key);
+        }
+      };
+    });
+  }
 
+  resetValues();
   var logoTabs = document.querySelectorAll('.logo-body>.tab');
   var logoHeader = $('.logo-header');
   var cbLogo = $('#cblogo');
   var logoImg = $('#logoImg');
-  var effectImg = $('#effect-img');
+  var effectImg = $('#effectImg');
   var logoTab = {};
   setLogoType($('.logo-header>[data-type]'));
   logoHeader.addEventListener('click', function (e) {
@@ -120,7 +173,7 @@
   $('#fimg').addEventListener('change', function (e) {
     showImage(logoImg, e.target.files[0]);
   }, false);
-  $('#effect-file').addEventListener('change', function (e) {
+  $('#effectFile').addEventListener('change', function (e) {
     showImage(effectImg, e.target.files[0]);
   }, false);
 
@@ -132,7 +185,7 @@
     var colorFore = $('#colorFore').value;
     var colorBack = $('#colorBack').value;
     var options = {
-      cellSize: Number($('#cellSize').value),
+      cellSize: +$('#cellSize').value,
       foreground: [
         // foreground color
         {style: colorFore},
@@ -147,21 +200,21 @@
       ],
       background: colorBack,
       data: $('#qrtext').value,
-      typeNumber: Number($('#typeNumber').value),
+      typeNumber: +$('#typeNumber').value,
     };
     //q.innerHTML='';
     if (cbLogo.checked) {
       options.logo = {
-        clearEdges: Number($('#qrclearedges').value),
+        clearEdges: +$('#logoClearEdges').value,
         size: $('#logoSize').value / 100,
-        margin: Number($('#logoMargin').value),
+        margin: +$('#logoMargin').value,
       };
       if (logoTab.type == 'image')
         options.logo.image = logoImg;
       else {
         options.logo.text = $('#logoText').value;
         var font = $('#logoFont').value;
-        if (font) options.logo.fontFace = font;
+        if (font) options.logo.fontFamily = font;
         options.logo.color = $('#logoColor').value;
         var style = '';
         if ($('#logoItalic').checked) style += 'italic ';
@@ -171,7 +224,7 @@
     }
     var effect = $('[name=effect-type]:checked').value;
     if (effect !== 'none') {
-      options.effect = {key: effect, value: $('#effect-value').value / 100};
+      options.effect = {key: effect, value: $('#effectValue').value / 100};
       if (effect === 'image') {
         options.background = [colorBack, effectImg];
       }
