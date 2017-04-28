@@ -233,7 +233,7 @@ const plugin = qrcanvas => {
   });
   qrcanvas.shouldTransclude = index => {
     const { options: { logo } } = qrcanvas;
-    if (logo.clearEdges > 1) return transclude[index];
+    if (edger && edger.enabled && logo.clearEdges > 1) return transclude[index];
     return true;
   };
 };
