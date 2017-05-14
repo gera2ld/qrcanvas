@@ -1,8 +1,11 @@
+* {
+  box-sizing: border-box;
+}
 body {
   background: #eee;
 }
-* {
-  box-sizing: border-box;
+input[type=file] {
+  width: 100%;
 }
 .panel {
   display: inline-block;
@@ -10,20 +13,18 @@ body {
   margin-right: 10px;
   vertical-align: top;
 }
-#qrcanvas {
-  display: inline-block;
-  vertical-align: top;
+.flex {
+  display: flex;
+}
+.flex-1 {
+  flex: 1;
+}
+.group > .label {
+  width: 90px;
+  flex: 0 0 90px;
 }
 .group {
   margin-bottom: .4em;
-}
-.group > .content {
-  display: block;
-  margin-left: 90px;
-}
-.group > small {
-  float: left;
-  width: 90px;
 }
 .input > * {
   width: 100%;
@@ -33,12 +34,6 @@ body {
 }
 .tabs > * {
   display: inline-block;
-}
-.tab:not(.active) {
-  display: none;
-}
-#cblogo:not(:checked) ~ .logo-header {
-  display: none;
 }
 .logo-header > * {
   display: inline-block;
@@ -58,16 +53,4 @@ body {
   padding: .4em;
   border: 1px solid #aaa;
   background: wheat;
-}
-#cblogo:not(:checked) ~ .logo-body {
-  display: none;
-}
-#effect-none:checked ~ .input {
-  display: none;
-}
-.effect-image {
-  display: none;
-}
-#effect-image:checked ~ .input > .effect-image {
-  display: block;
 }
