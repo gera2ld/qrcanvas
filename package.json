@@ -1,6 +1,6 @@
 {
   "name": "qrcanvas",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "title": "QRCanvas",
   "description": "Generate characteristic qrcodes with a canvas.",
   "author": "Gerald <i@gerald.top>",
