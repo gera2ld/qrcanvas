@@ -44,6 +44,8 @@ const themes = {
   },
 };
 
+const correctLevels = ['L', 'M', 'Q', 'H'];
+
 const STORE_KEY = 'userSettings';
 const data = {
   settings: Object.assign({
@@ -58,6 +60,7 @@ const data = {
     logoSize: 15,
     logoClearEdges: 3,
     logoMargin: 0,
+    correctLevel: 0,
   }, themes.classic, loadData()),
   effects: [
     { title: 'None', value: '' },
@@ -107,6 +110,7 @@ new Vue({
         background: colorBack,
         data: settings.qrtext,
         typeNumber: +settings.typeNumber,
+        correctLevel: correctLevels[settings.correctLevel] || 'L',
       };
       if (settings.logo) {
         options.logo = {

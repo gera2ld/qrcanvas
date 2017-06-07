@@ -24,6 +24,12 @@
       </div>
     </div>
     <div class="group flex">
+      <small class="label">Correct level:</small>
+      <div class="input flex-1">
+        <input type="range" min="0" max="3" v-model="settings.correctLevel">
+      </div>
+    </div>
+    <div class="group flex">
       <small class="label">Effect:</small>
       <div class="flex-1">
         <div v-for="effect in effects" class="input-group">

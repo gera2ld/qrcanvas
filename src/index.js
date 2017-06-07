@@ -17,7 +17,7 @@ const defaultOptions = () => ({
   typeNumber: 1,
 
   // correctLevel can be 'L', 'M', 'Q' or 'H'
-  correctLevel: 'M',
+  correctLevel: 'L',
 
   // cellSize is preferred to size
   // if none is provided, use default values below
@@ -106,7 +106,7 @@ class QRCanvas {
     } else {
       options.logo = {};
     }
-    if (options.logo || options.effect.key === 'image') {
+    if (options.logo.text || options.logo.image || options.effect.key === 'image') {
       options.correctLevel = 'H';
     }
     if (!options.cellSize && !options.size) {
