@@ -9,6 +9,7 @@
   "main": "dist/qrcanvas.node.js",
   "typings": "types/index.d.ts",
   "scripts": {
+    "prebuild": "rm -rf dist",
     "build": "node scripts/build",
     "demo": "sh scripts/build-demo.sh",
     "deploy": "sh scripts/build-gh.sh",
