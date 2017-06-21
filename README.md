@@ -24,13 +24,15 @@ Quick Start
 
 * Use in browser
 
+  You can either build the code or get released files from <https://unpkg.com>.
+
   ``` html
   <div id="qrcode"></div>
 
-  <script src="lib/qrcanvas.js"></script>
+  <script src="https://unpkg.com/qrcanvas"></script>
 
-  <!-- You can use a slim version if no effects are wanted. -->
-  <script src="lib/qrcanvas.slim.js"></script>
+  <!-- A slim version is not bundled with any effects. -->
+  <script src="https://unpkg.com/qrcanvas/dist/qrcanvas.slim.js"></script>
   ```
 
   ``` js
