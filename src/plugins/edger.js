@@ -3,7 +3,8 @@ import { register } from './base';
 
 // IE 9- does not support Uint8Array.
 // `global` will be replaced by `window` when compiled for browsers.
-const Uint8Array = global.Uint8Array;
+const root = typeof window === 'undefined' ? global : window;
+const Uint8Array = root.Uint8Array || root.Array;
 
 /**
  * @desc Read image data from a canvas and find the edges of the image.
