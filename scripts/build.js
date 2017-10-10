@@ -1,12 +1,11 @@
 const rollup = require('rollup');
 const babel = require('rollup-plugin-babel');
 const alias = require('rollup-plugin-alias');
-const replace = require('rollup-plugin-replace');
 
 [
   {
-    entry: 'src/index.js',
-    dest: 'dist/qrcanvas.node.js',
+    input: 'src/entries/node.js',
+    file: 'dist/qrcanvas.node.js',
     format: 'cjs',
     plugins: [
       babel({
@@ -33,10 +32,10 @@ const replace = require('rollup-plugin-replace');
     ],
   },
   {
-    entry: 'src/index.js',
-    dest: 'dist/qrcanvas.js',
+    input: 'src/entries/browser.js',
+    file: 'dist/qrcanvas.js',
     format: 'umd',
-    moduleName: 'qrcanvas',
+    name: 'qrcanvas',
     plugins: [
       babel({
         presets: [
@@ -47,20 +46,14 @@ const replace = require('rollup-plugin-replace');
           'external-helpers',
         ],
         ignore: 'node_modules/**',
-      }),
-      alias({
-        './node': './browser',
-      }),
-      replace({
-        'global.Uint8Array' : 'window.Uint8Array || window.Array',
       }),
     ],
   },
   {
-    entry: 'src/index.js',
-    dest: 'dist/qrcanvas.slim.js',
+    input: 'src/entries/browser.js',
+    file: 'dist/qrcanvas.slim.js',
     format: 'umd',
-    moduleName: 'qrcanvas',
+    name: 'qrcanvas',
     plugins: [
       babel({
         presets: [
@@ -73,11 +66,7 @@ const replace = require('rollup-plugin-replace');
         ignore: 'node_modules/**',
       }),
       alias({
-        './node': './browser',
         './plugins/index': './plugins/slim',
-      }),
-      replace({
-        'global.Uint8Array': 'window.Uint8Array || window.Array',
       }),
     ],
   }

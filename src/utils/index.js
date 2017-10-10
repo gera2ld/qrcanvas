@@ -1,4 +1,4 @@
-import { createCanvas, isDrawable } from './node';
+export const methods = {};
 
 /**
  * @desc Create a new canvas.
@@ -7,7 +7,7 @@ import { createCanvas, isDrawable } from './node';
  * @return {Canvas}
  */
 export function getCanvas(width, height) {
-  const canvas = createCanvas();
+  const canvas = methods.createCanvas();
   canvas.width = width;
   canvas.height = height == null ? width : height;
   return canvas;
@@ -31,7 +31,7 @@ export function drawCanvas(canvas, options) {
     } else if (item) {
       const ctx = canvas.getContext('2d');
       let obj;
-      if (isDrawable(item)) {
+      if (methods.isDrawable(item)) {
         obj = { image: item };
       } else if (typeof item === 'string') {
         obj = { style: item };
