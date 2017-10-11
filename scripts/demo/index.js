@@ -61,7 +61,7 @@ const data = {
     logoClearEdges: 3,
     logoMargin: 0,
     correctLevel: 0,
-  }, themes.classic, loadData()),
+  }, themes.classic),
   effects: [
     { title: 'None', value: '' },
     { title: 'Liquid', value: 'liquid' },
@@ -70,19 +70,6 @@ const data = {
   ],
   themes: Object.keys(themes),
 };
-
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch (e) {
-    // ignore
-  }
-}
-
-function dumpData(data) {
-  localStorage.setItem(STORE_KEY, JSON.stringify(data));
-}
 
 new Vue({
   components: {
@@ -143,7 +130,6 @@ new Vue({
           options.background = [colorBack, this.$refs.effect];
         }
       }
-      dumpData(settings);
       return options;
     },
   },

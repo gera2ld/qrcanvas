@@ -1,40 +1,61 @@
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
+
 body {
   background: #eee;
 }
+
 input[type=file] {
   width: 100%;
 }
+
+.flex {
+  display: flex;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.group {
+  margin-bottom: .4em;
+}
+
+.group > .label {
+  width: 90px;
+  flex: 0 0 90px;
+}
+
+.input > * {
+  width: 100%;
+}
+
+.input-labels {
+  text-align-last: justify;
+}
+
 .panel {
   display: inline-block;
   width: 300px;
   margin-right: 10px;
   vertical-align: top;
 }
-.flex {
-  display: flex;
+
+.intro {
+  margin-bottom: 1em;
+  padding: .3em;
+  line-height: 1.5;
+  font-size: .7em;
+  border: 1px solid #999;
 }
-.flex-1 {
-  flex: 1;
-}
-.group > .label {
-  width: 90px;
-  flex: 0 0 90px;
-}
-.group {
-  margin-bottom: .4em;
-}
-.input > * {
-  width: 100%;
-}
-.input-labels {
-  text-align-last: justify;
-}
+
 .tabs > * {
   display: inline-block;
 }
+
 .logo-header > * {
   display: inline-block;
   padding: .3em;
@@ -44,13 +65,19 @@ input[type=file] {
   color: gray;
   cursor: pointer;
 }
+
 .logo-header > .active {
   background: wheat;
   color: black;
 }
+
 .logo-body {
   display: block;
   padding: .4em;
   border: 1px solid #aaa;
   background: wheat;
+}
+
+#app {
+  padding: 1em;
 }
