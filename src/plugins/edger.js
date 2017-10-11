@@ -31,7 +31,7 @@ function initBgData({ canvas, isBackgroundColor, margin }) {
   const pixelData = new Uint8Array(total);
 
   const queue = [];
-  const slice = queue.slice;
+  const { slice } = queue;
   const isBgPixel = index => {
     let value = pixelData[index];
     if (!value) {
@@ -213,7 +213,11 @@ const plugin = qrcanvas => {
       for (let i = 0; i < count; i += 1) {
         for (let j = 0; j < count; j += 1) {
           transclude[i * count + j] = edger.isBackground(
-            j * cellSize - logo.x, i * cellSize - logo.y, cellSize, cellSize);
+            j * cellSize - logo.x,
+            i * cellSize - logo.y,
+            cellSize,
+            cellSize,
+          );
         }
       }
     }

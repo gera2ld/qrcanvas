@@ -68,7 +68,9 @@ export function drawCells({ cellSize, count }, drawEach) {
     for (let j = 0; j < count; j += 1) {
       const x = i * cellSize;
       const y = j * cellSize;
-      drawEach({ i, j, x, y });
+      drawEach({
+        i, j, x, y,
+      });
     }
   }
 }

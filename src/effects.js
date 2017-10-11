@@ -3,8 +3,12 @@ import { drawCells } from './utils/index';
 const effects = {
   default: {
     data(contextData) {
-      const { context, cellSize, isDark, colorDark } = contextData;
-      drawCells(contextData, ({ i, j, x, y }) => {
+      const {
+        context, cellSize, isDark, colorDark,
+      } = contextData;
+      drawCells(contextData, ({
+        i, j, x, y,
+      }) => {
         if (isDark(i, j)) {
           context.fillStyle = colorDark;
           context.fillRect(x, y, cellSize, cellSize);

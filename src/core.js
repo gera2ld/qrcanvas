@@ -192,7 +192,7 @@ class QRCanvas {
         `${height}px`,
         logo.fontFamily,
       ].filter(Boolean).join(' ');
-      width = measureText(logo.text, font).width;
+      ({ width } = measureText(logo.text, font));
       normalize();
       const ctx = logo.canvas.getContext('2d');
       ctx.font = [
@@ -212,7 +212,9 @@ class QRCanvas {
 
   draw() {
     const { count, cellSize, size } = this.qrdata;
-    const { foreground, background, noAlpha, logo, reuseCanvas } = this.options;
+    const {
+      foreground, background, noAlpha, logo, reuseCanvas,
+    } = this.options;
     const iCellSize = Math.ceil(cellSize);
     const iSize = iCellSize * count;
     const canvas = getCanvas(iSize);
@@ -276,7 +278,7 @@ class QRCanvas {
     return canvasTarget;
   }
 
-  drawCells(contextData) {  // eslint-disable-line class-methods-use-this
+  drawCells(contextData) { // eslint-disable-line class-methods-use-this
     const { effect } = contextData;
     effect.data(contextData);
   }
