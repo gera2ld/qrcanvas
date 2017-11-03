@@ -1,4 +1,7 @@
-export const methods = {};
+export const methods = {
+  createCanvas: () => document.createElement('canvas'),
+  isDrawable: el => el instanceof HTMLCanvasElement,
+};
 
 /**
  * @desc Create a new canvas.

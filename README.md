@@ -22,6 +22,12 @@ $ npm i qrcanvas
 Quick Start
 ---
 
+* Use in modules
+
+  ``` js
+  import qrcanvas from 'qrcanvas';
+  ```
+
 * Use in browser
 
   You can either build the code or get released files from <https://unpkg.com>.
@@ -48,7 +54,7 @@ Quick Start
 
   ``` js
   const fs = require('fs');
-  const qrcanvas = require('qrcanvas');
+  const qrcanvas = require('qrcanvas/dist/qrcanvas.node.js');
   const canvas = qrcanvas({
     data: 'hello, world'
   });

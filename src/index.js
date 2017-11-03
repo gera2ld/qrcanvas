@@ -4,17 +4,17 @@
  * @license MIT
  */
 
+import qrcode from 'qrcode-generator';
 import { getConfig } from './config';
-import qrcode from './vendors/qrcode';
-import { getCanvas, measureText, drawCanvas } from './utils/index';
+import { methods, getCanvas, measureText, drawCanvas } from './utils/index';
 import EventEmitter from './utils/events';
 import applyPlugins from './plugins/index';
 import { getEffect } from './effects';
 
 const defaultOptions = () => ({
   // typeNumber belongs to 1..40
-  // will be increased to the smallest valid number if too small
-  typeNumber: 1,
+  // otherwise it will be increased to the smallest valid number
+  typeNumber: 0,
 
   // correctLevel can be 'L', 'M', 'Q' or 'H'
   correctLevel: 'L',
@@ -163,8 +163,8 @@ class QRCanvas {
       let iHeight = (Math.sqrt(Math.min(width * height / size / size, logo.size) / k) * count) | 0;
       let iWidth = (k * iHeight) | 0;
       // (count - [iWidth | iHeight]) must be even if the logo is in the middle
-      if ((count - iWidth) % 2) iWidth += 1;
-      if ((count - iHeight) % 2) iHeight += 1;
+      if ((count - iWidth) % 2) iWidth -= 1;
+      if ((count - iHeight) % 2) iHeight -= 1;
 
       const kl = Math.min(
         (iHeight * cellSize - 2 * logo.margin) / height,
@@ -314,7 +314,11 @@ class QRCanvas {
   }
 }
 
-export default options => {
-  const qrcanvas = new QRCanvas(options);
-  return qrcanvas.draw();
+const qrcanvas = options => {
+  const canvas = new QRCanvas(options);
+  return canvas.draw();
 };
+
+qrcanvas.methods = methods;
+
+export default qrcanvas;

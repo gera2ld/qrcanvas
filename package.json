@@ -5,8 +5,8 @@
   "description": "Generate characteristic qrcodes with a canvas.",
   "author": "Gerald <i@gerald.top>",
   "license": "ISC",
-  "browser": "dist/qrcanvas.js",
-  "main": "dist/qrcanvas.node.js",
+  "main": "dist/qrcanvas.common.js",
+  "unpkg": "dist/qrcanvas.js",
   "typings": "types/index.d.ts",
   "scripts": {
     "prebuild": "rm -rf dist",
@@ -26,13 +26,18 @@
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
     "babel-plugin-external-helpers": "^6.22.0",
-    "babel-preset-env": "^1.6.0",
+    "babel-preset-env": "^1.6.1",
     "babel-preset-stage-2": "^6.24.1",
-    "eslint": "^4.8.0",
-    "eslint-config-airbnb-base": "^12.0.2",
-    "eslint-plugin-import": "^2.7.0",
+    "eslint": "^4.10.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
     "rollup": "^0.50.0",
-    "rollup-plugin-alias": "^1.3.1",
-    "rollup-plugin-babel": "^3.0.2"
+    "rollup-plugin-alias": "^1.4.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-node-resolve": "^3.0.0"
+  },
+  "dependencies": {
+    "qrcode-generator": "^1.3.1"
   }
 }

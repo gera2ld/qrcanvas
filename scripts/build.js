@@ -1,6 +1,9 @@
+const path = require('path');
 const rollup = require('rollup');
 const babel = require('rollup-plugin-babel');
 const alias = require('rollup-plugin-alias');
+const resolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
 
 [
   {
@@ -29,12 +32,15 @@ const alias = require('rollup-plugin-alias');
     ],
     external: [
       'canvas',
+      'qrcode-generator',
+      path.resolve('src/entries/qrcanvas.common.js'),
     ],
   },
+  // common js
   {
-    input: 'src/entries/browser.js',
-    file: 'dist/qrcanvas.js',
-    format: 'umd',
+    input: 'src/index.js',
+    file: 'dist/qrcanvas.common.js',
+    format: 'cjs',
     name: 'qrcanvas',
     plugins: [
       babel({
@@ -48,9 +54,13 @@ const alias = require('rollup-plugin-alias');
         ignore: 'node_modules/**',
       }),
     ],
+    external: [
+      'qrcode-generator',
+    ],
   },
+  // slim version
   {
-    input: 'src/entries/browser.js',
+    input: 'src/index.js',
     file: 'dist/qrcanvas.slim.js',
     format: 'umd',
     name: 'qrcanvas',
@@ -68,6 +78,29 @@ const alias = require('rollup-plugin-alias');
       alias({
         './plugins/index': './plugins/slim',
       }),
+      resolve(),
+      commonjs(),
+    ],
+  },
+  // for unpkg
+  {
+    input: 'src/index.js',
+    file: 'dist/qrcanvas.js',
+    format: 'umd',
+    name: 'qrcanvas',
+    plugins: [
+      babel({
+        presets: [
+          ['env', { modules: false }],
+          'stage-2',
+        ],
+        plugins: [
+          'external-helpers',
+        ],
+        ignore: 'node_modules/**',
+      }),
+      resolve(),
+      commonjs(),
     ],
   }
 ].forEach(item => {
