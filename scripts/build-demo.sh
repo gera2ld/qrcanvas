@@ -1,3 +1,3 @@
 rm -rf dist
-cp -r scripts/demo dist
+cp -r src/demo dist
 node scripts/build.js

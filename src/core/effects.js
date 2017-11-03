@@ -1,15 +1,36 @@
-/**
-* @desc rendering functions for each cell
-*/
-import { getConfig } from '../config';
-import { setEffects } from '../effects';
-import { drawCanvas, getCanvas, drawCells } from '../utils/index';
+import QRCanvas from './qrcanvas';
+import { variables, effects } from './config';
 
-setEffects({
-  round: { data: drawRound },
-  liquid: { data: drawLiquid },
-  image: { data: drawImage, foreground: drawImageFore },
-});
+effects.default = { data: drawDefault };
+effects.round = { data: drawRound };
+effects.liquid = { data: drawLiquid };
+effects.image = { data: drawImage, foreground: drawImageFore };
+
+function drawDefault(contextData) {
+  const {
+    context, cellSize, isDark, colorDark,
+  } = contextData;
+  drawCells(contextData, ({
+    i, j, x, y,
+  }) => {
+    if (isDark(i, j)) {
+      context.fillStyle = colorDark;
+      context.fillRect(x, y, cellSize, cellSize);
+    }
+  });
+}
+
+function drawCells({ cellSize, count }, drawEach) {
+  for (let i = 0; i < count; i += 1) {
+    for (let j = 0; j < count; j += 1) {
+      const x = i * cellSize;
+      const y = j * cellSize;
+      drawEach({
+        i, j, x, y,
+      });
+    }
+  }
+}
 
 function drawCorner(context, cornerX, cornerY, x, y, r) {
   if (r) {
@@ -178,7 +199,7 @@ function drawImageFore(contextData) {
     cellSize, size, mask, options,
   } = contextData;
   const maskLayer = mask();
-  const foreground = drawCanvas(getCanvas(size), {
+  const foreground = QRCanvas.drawCanvas(QRCanvas.getCanvas(size), {
     cellSize,
     size,
     data: options.foreground,
@@ -187,7 +208,7 @@ function drawImageFore(contextData) {
   ctx.globalCompositeOperation = 'destination-in';
   ctx.drawImage(maskLayer, 0, 0);
   ctx.globalCompositeOperation = 'destination-over';
-  ctx.fillStyle = getConfig('colorLight');
+  ctx.fillStyle = variables.colorLight;
   ctx.fillRect(0, 0, size, size);
   return foreground;
 }

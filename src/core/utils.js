@@ -1,7 +1,4 @@
-export const methods = {
-  createCanvas: () => document.createElement('canvas'),
-  isDrawable: el => el instanceof HTMLCanvasElement,
-};
+import QRCanvas from './qrcanvas';
 
 /**
  * @desc Create a new canvas.
@@ -9,8 +6,8 @@ export const methods = {
  * @param {Int} height Height of the canvas.
  * @return {Canvas}
  */
-export function getCanvas(width, height) {
-  const canvas = methods.createCanvas();
+function getCanvas(width, height) {
+  const canvas = QRCanvas.createCanvas();
   canvas.width = width;
   canvas.height = height == null ? width : height;
   return canvas;
@@ -24,7 +21,7 @@ export function getCanvas(width, height) {
  *    size: {Int}
  *    cellSize: {Int}
  */
-export function drawCanvas(canvas, options) {
+function drawCanvas(canvas, options) {
   const { data, cellSize, size } = options;
   let queue = [data];
   while (queue.length) {
@@ -34,7 +31,7 @@ export function drawCanvas(canvas, options) {
     } else if (item) {
       const ctx = canvas.getContext('2d');
       let obj;
-      if (methods.isDrawable(item)) {
+      if (QRCanvas.isDrawable(item)) {
         obj = { image: item };
       } else if (typeof item === 'string') {
         obj = { style: item };
@@ -59,21 +56,13 @@ export function drawCanvas(canvas, options) {
 }
 
 let canvasText;
-export function measureText(text, font) {
+function measureText(text, font) {
   if (!canvasText) canvasText = getCanvas(100);
   const ctx = canvasText.getContext('2d');
   ctx.font = font;
   return ctx.measureText(text);
 }
 
-export function drawCells({ cellSize, count }, drawEach) {
-  for (let i = 0; i < count; i += 1) {
-    for (let j = 0; j < count; j += 1) {
-      const x = i * cellSize;
-      const y = j * cellSize;
-      drawEach({
-        i, j, x, y,
-      });
-    }
-  }
-}
+QRCanvas.getCanvas = getCanvas;
+QRCanvas.drawCanvas = drawCanvas;
+QRCanvas.measureText = measureText;

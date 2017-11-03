@@ -10,6 +10,7 @@ export default class EventEmitter {
       this.events[type] = listeners;
     }
     listeners.push(listener);
+    return () => this.off(type, listener);
   }
 
   off(type, listener) {

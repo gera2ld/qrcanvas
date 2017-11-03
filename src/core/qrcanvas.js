@@ -1,15 +1,6 @@
-/**
- * JSQRGen: QRCode Canvas Renderer
- * @author Gerald <i@gerald.top>
- * @license MIT
- */
-
 import qrcode from 'qrcode-generator';
-import { getConfig } from './config';
-import { methods, getCanvas, measureText, drawCanvas } from './utils/index';
-import EventEmitter from './utils/events';
-import applyPlugins from './plugins/index';
-import { getEffect } from './effects';
+import EventEmitter from './events';
+import { variables, effects, plugins } from './config';
 
 const defaultOptions = () => ({
   // typeNumber belongs to 1..40
@@ -31,7 +22,7 @@ const defaultOptions = () => ({
   // * cols | width: default size
   // * rows | height: default size
   // * style: default 'black'
-  foreground: getConfig('colorDark'),
+  foreground: variables.colorDark,
   background: null,
 
   // data MUST be a string
@@ -74,21 +65,21 @@ const defaultOptions = () => ({
 });
 
 const defaultLogoOptions = () => ({
-  color: getConfig('colorDark'),
+  color: variables.colorDark,
   fontFamily: 'Cursive',
   clearEdges: 0,
   margin: -1,
   size: 0.15,
 });
 
-class QRCanvas {
+export default class QRCanvas {
   constructor(options) {
     this.events = new EventEmitter();
-    applyPlugins(this);
-    this.setOptions(options || {});
+    QRCanvas.plugins.forEach(plugin => plugin(this));
+    this.setData(options || {});
   }
 
-  setOptions(userOptions) {
+  setData(userOptions) {
     const options = {
       ...defaultOptions(),
       ...userOptions,
@@ -113,11 +104,11 @@ class QRCanvas {
       options.cellSize = 2;
     }
     this.options = options;
-    this.initQR();
+    this.makeQR();
     this.initLogo();
   }
 
-  initQR() {
+  makeQR() {
     const { typeNumber, correctLevel, data } = this.options;
     const qr = qrcode(typeNumber, correctLevel);
     qr.addData(data || '');
@@ -175,7 +166,7 @@ class QRCanvas {
       logo.height = (kl * height) | 0;
       logo.x = ((size - logo.width) >> 1) - logo.margin;
       logo.y = ((size - logo.height) >> 1) - logo.margin;
-      logo.canvas = getCanvas(logo.width + 2 * logo.margin, logo.height + 2 * logo.margin);
+      logo.canvas = QRCanvas.getCanvas(logo.width + 2 * logo.margin, logo.height + 2 * logo.margin);
     };
     if (logo.image) {
       const { image } = logo;
@@ -192,7 +183,7 @@ class QRCanvas {
         `${height}px`,
         logo.fontFamily,
       ].filter(Boolean).join(' ');
-      ({ width } = measureText(logo.text, font));
+      ({ width } = QRCanvas.measureText(logo.text, font));
       normalize();
       const ctx = logo.canvas.getContext('2d');
       ctx.font = [
@@ -217,16 +208,16 @@ class QRCanvas {
     } = this.options;
     const iCellSize = Math.ceil(cellSize);
     const iSize = iCellSize * count;
-    const canvas = getCanvas(iSize);
+    const canvas = QRCanvas.getCanvas(iSize);
     const contextData = {
       count,
       canvas,
       context: canvas.getContext('2d'),
       cellSize: iCellSize,
       size: iSize,
-      colorDark: getConfig('colorDark'),
+      colorDark: variables.colorDark,
       isDark: this.isDark,
-      effect: getEffect(this.options.effect.key),
+      effect: effects[this.options.effect.key] || effects.default,
       options: this.options,
     };
     this.drawCells(contextData);
@@ -244,11 +235,11 @@ class QRCanvas {
     // 2. Draw background layer according to options
     // 3. Draw foreground image with QRCode data
     // 4. Draw logo
-    const canvasComplex = drawCanvas(getCanvas(iSize), {
+    const canvasComplex = QRCanvas.drawCanvas(QRCanvas.getCanvas(iSize), {
       cellSize: iCellSize,
       size: iSize,
       data: [
-        noAlpha && getConfig('colorLight'),
+        noAlpha && variables.colorLight,
         background,
         canvasFore,
         logo.canvas && {
@@ -267,7 +258,7 @@ class QRCanvas {
       canvasTarget.width = size;
       canvasTarget.height = size;
     } else if (size !== iSize) {
-      canvasTarget = getCanvas(size, size);
+      canvasTarget = QRCanvas.getCanvas(size, size);
     }
     if (canvasTarget) {
       const ctx = canvasTarget.getContext('2d');
@@ -293,8 +284,8 @@ class QRCanvas {
       return effect.foreground({
         ...contextData,
         mask: () => {
-          const canvas = getCanvas(size);
-          const defaultEffect = getEffect();
+          const canvas = QRCanvas.getCanvas(size);
+          const defaultEffect = effects.default;
           this.drawCells({
             ...contextData,
             canvas,
@@ -306,7 +297,7 @@ class QRCanvas {
         },
       });
     }
-    return drawCanvas(getCanvas(size), {
+    return QRCanvas.drawCanvas(QRCanvas.getCanvas(size), {
       cellSize,
       size,
       data,
@@ -314,11 +305,6 @@ class QRCanvas {
   }
 }
 
-const qrcanvas = options => {
-  const canvas = new QRCanvas(options);
-  return canvas.draw();
-};
-
-qrcanvas.methods = methods;
-
-export default qrcanvas;
+QRCanvas.variables = variables;
+QRCanvas.effects = effects;
+QRCanvas.plugins = plugins;
