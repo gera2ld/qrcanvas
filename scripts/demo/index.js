@@ -2,13 +2,9 @@ const QrCanvas = {
   props: {
     options: Object,
   },
-  render(createElement) {
-    return createElement('canvas');
-  },
+  render: h => h('canvas'),
   methods: {
     render(options) {
-      // Render only if mounted, skip SSR.
-      if (!this.mounted) return;
       const qroptions = Object.assign({}, options);
       qroptions.reuseCanvas = this.$el;
       qrcanvas(qroptions);
@@ -18,7 +14,6 @@ const QrCanvas = {
     options: 'render',
   },
   mounted() {
-    this.mounted = true;
     this.render(this.options);
   },
 };
@@ -53,7 +48,6 @@ const data = {
     cellSize: 6,
     effect: '',
     effectValue: 100,
-    typeNumber: 1,
     logo: false,
     logoType: 'image',
     logoText: 'Gerald',
@@ -96,7 +90,6 @@ new Vue({
         ],
         background: colorBack,
         data: settings.qrtext,
-        typeNumber: +settings.typeNumber,
         correctLevel: correctLevels[settings.correctLevel] || 'L',
       };
       if (settings.logo) {
