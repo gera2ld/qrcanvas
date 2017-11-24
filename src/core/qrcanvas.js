@@ -151,15 +151,22 @@ export default class QRCanvas {
     let height;
     const normalize = () => {
       const k = width / height;
-      let iHeight = (Math.sqrt(Math.min(width * height / size / size, logo.size) / k) * count) | 0;
+      const margin2 = 2 * logo.margin;
+      let iHeight = Math.min(
+        Math.sqrt(Math.min(
+          (width + margin2) * (height + margin2) / size / size,
+          logo.size,
+        ) / k) * count,
+        count / k,
+      ) | 0;
       let iWidth = (k * iHeight) | 0;
       // (count - [iWidth | iHeight]) must be even if the logo is in the middle
       if ((count - iWidth) % 2) iWidth -= 1;
       if ((count - iHeight) % 2) iHeight -= 1;
 
       const kl = Math.min(
-        (iHeight * cellSize - 2 * logo.margin) / height,
-        (iWidth * cellSize - 2 * logo.margin) / width,
+        (iHeight * cellSize - margin2) / height,
+        (iWidth * cellSize - margin2) / width,
         1,
       );
       logo.width = (kl * width) | 0;
