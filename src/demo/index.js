@@ -1,3 +1,6 @@
+/* global qrcanvas, Vue */
+/* eslint-disable object-curly-newline */
+
 const QrCanvas = {
   props: {
     options: Object,
@@ -41,7 +44,6 @@ const themes = {
 
 const correctLevels = ['L', 'M', 'Q', 'H'];
 
-const STORE_KEY = 'userSettings';
 const data = {
   settings: Object.assign({
     qrtext: 'https://gerald.top',
@@ -73,20 +75,22 @@ new Vue({
   computed: {
     options() {
       const { settings } = this;
-      const { colorFore, colorBack, colorOut, colorIn } = settings;
+      const {
+        colorFore, colorBack, colorOut, colorIn,
+      } = settings;
       const options = {
         cellSize: +settings.cellSize,
         foreground: [
           // foreground color
-          {style: colorFore},
+          { style: colorFore },
           // outer squares of the positioner
-          {row: 0, rows: 7, col: 0, cols: 7, style: colorOut},
-          {row: -7, rows: 7, col: 0, cols: 7, style: colorOut},
-          {row: 0, rows: 7, col: -7, cols: 7, style: colorOut},
+          { row: 0, rows: 7, col: 0, cols: 7, style: colorOut },
+          { row: -7, rows: 7, col: 0, cols: 7, style: colorOut },
+          { row: 0, rows: 7, col: -7, cols: 7, style: colorOut },
           // inner squares of the positioner
-          {row: 2, rows: 3, col: 2, cols: 3, style: colorIn},
-          {row: -5, rows: 3, col: 2, cols: 3, style: colorIn},
-          {row: 2, rows: 3, col: -5, cols: 3, style: colorIn},
+          { row: 2, rows: 3, col: 2, cols: 3, style: colorIn },
+          { row: -5, rows: 3, col: 2, cols: 3, style: colorIn },
+          { row: 2, rows: 3, col: -5, cols: 3, style: colorIn },
         ],
         background: colorBack,
         data: settings.qrtext,
