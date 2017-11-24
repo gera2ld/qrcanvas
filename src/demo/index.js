@@ -7,17 +7,18 @@ const QrCanvas = {
   },
   render: h => h('canvas'),
   methods: {
-    render(options) {
-      const qroptions = Object.assign({}, options);
-      qroptions.reuseCanvas = this.$el;
+    update(options) {
+      const qroptions = Object.assign({}, options, {
+        canvas: this.$el,
+      });
       qrcanvas(qroptions);
     },
   },
   watch: {
-    options: 'render',
+    options: 'update',
   },
   mounted() {
-    this.render(this.options);
+    this.update(this.options);
   },
 };
 
@@ -62,9 +63,10 @@ const data = {
     { title: 'None', value: '' },
     { title: 'Liquid', value: 'liquid' },
     { title: 'Round', value: 'round' },
-    { title: 'Image', value: 'image' },
+    { title: 'Spot', value: 'spot' },
   ],
   themes: Object.keys(themes),
+  options: {},
 };
 
 new Vue({
@@ -72,8 +74,14 @@ new Vue({
     QrCanvas,
   },
   data,
-  computed: {
-    options() {
+  watch: {
+    settings: {
+      deep: true,
+      handler: 'update',
+    },
+  },
+  methods: {
+    update() {
       const { settings } = this;
       const {
         colorFore, colorBack, colorOut, colorIn,
@@ -123,14 +131,12 @@ new Vue({
           key: settings.effect,
           value: settings.effectValue / 100,
         };
-        if (settings.effect === 'image') {
+        if (settings.effect === 'spot') {
           options.background = [colorBack, this.$refs.effect];
         }
       }
-      return options;
+      this.options = options;
     },
-  },
-  methods: {
     loadImage(e, ref) {
       const file = e.target.files[0];
       if (!file) return;
@@ -143,5 +149,8 @@ new Vue({
     loadTheme(key) {
       Object.assign(this.settings, themes[key]);
     },
+  },
+  mounted() {
+    this.update();
   },
 }).$mount('#app');

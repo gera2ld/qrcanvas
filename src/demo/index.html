@@ -44,7 +44,7 @@
         </div>
         <div class="input" v-show="settings.effect">
           <input type="range" min="0" max="100" step="5" v-model="settings.effectValue">
-          <div v-show="settings.effect==='image'">
+          <div v-show="settings.effect==='spot'">
             <img src="iloveme.jpg" ref="effect">
             <input type="file" @change="loadImage($event,'effect')">
           </div>

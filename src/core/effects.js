@@ -1,14 +1,26 @@
-import QRCanvas from './qrcanvas';
 import { variables, effects } from './config';
 
-effects.default = { data: drawDefault };
-effects.round = { data: drawRound };
-effects.liquid = { data: drawLiquid };
-effects.image = { data: drawImage, foreground: drawImageFore };
+effects.default = { draw: drawDefault };
+effects.round = { draw: drawRound };
+effects.liquid = { draw: drawLiquid };
+effects.spot = {
+  draw: drawSpot,
+  scenes: [
+    {
+      configMask: {
+        isDark: () => true,
+      },
+      configScene: {
+        data: variables.colorLight,
+      },
+    },
+    {},
+  ],
+};
 
 function drawDefault(contextData) {
   const {
-    context, cellSize, isDark, colorDark,
+    context, isDark, colorDark, qrdata: { cellSize },
   } = contextData;
   drawCells(contextData, ({
     i, j, x, y,
@@ -20,7 +32,7 @@ function drawDefault(contextData) {
   });
 }
 
-function drawCells({ cellSize, count }, drawEach) {
+function drawCells({ qrdata: { cellSize, count } }, drawEach) {
   for (let i = 0; i < count; i += 1) {
     for (let j = 0; j < count; j += 1) {
       const x = i * cellSize;
@@ -43,9 +55,9 @@ function drawCorner(context, cornerX, cornerY, x, y, r) {
 
 function drawRound(contextData) {
   const {
-    cellSize, context, options, isDark, colorDark,
+    context, effect, isDark, colorDark, qrdata: { cellSize },
   } = contextData;
-  const radius = options.effect.value * cellSize / 2;
+  const radius = effect.value * cellSize / 2;
   drawCells(contextData, ({
     i, j, x, y,
   }) => {
@@ -75,9 +87,9 @@ function fillCorner(context, startX, startY, cornerX, cornerY, destX, destY, rad
 
 function drawLiquid(contextData) {
   const {
-    cellSize, context, isDark, colorDark, options,
+    context, isDark, colorDark, effect, qrdata: { cellSize },
   } = contextData;
-  const radius = options.effect.value * cellSize / 2;
+  const radius = effect.value * cellSize / 2;
   drawCells(contextData, ({
     i, j, x, y,
   }) => {
@@ -170,45 +182,35 @@ function drawLiquid(contextData) {
   });
 }
 
-function drawImage(contextData) {
+function drawSpot(contextData) {
   const {
-    context, cellSize, count, colorDark, options,
+    context, isDark, colorDark, effect, qrdata: { cellSize, count },
   } = contextData;
   drawCells(contextData, ({
     i, j, x, y,
   }) => {
-    context.fillStyle = colorDark;
-    let fillSize = 0.25;
-    if (i <= 7 && j <= 7
-      || i <= 7 && count - j - 1 <= 7
-      || count - i - 1 <= 7 && j <= 7
-      || i + 5 <= count && i + 9 >= count && j + 5 <= count && j + 9 >= count
-      || i === 7 || j === 7) fillSize = 1 - 0.1 * options.effect.value;
-    const offset = (1 - fillSize) / 2;
-    context.fillRect(
-      x + offset * cellSize,
-      y + offset * cellSize,
-      fillSize * cellSize,
-      fillSize * cellSize,
-    );
+    if (isDark(i, j)) {
+      context.fillStyle = colorDark;
+      let fillSize;
+      if (
+        i <= 7 && j <= 7 ||
+        i <= 7 && count - j - 1 <= 7 ||
+        count - i - 1 <= 7 && j <= 7 ||
+        i + 5 <= count && i + 9 >= count && j + 5 <= count && j + 9 >= count ||
+        i === 7 ||
+        j === 7
+      ) {
+        fillSize = 1 - 0.1 * effect.value;
+      } else {
+        fillSize = 0.25;
+      }
+      const offset = (1 - fillSize) / 2;
+      context.fillRect(
+        x + offset * cellSize,
+        y + offset * cellSize,
+        fillSize * cellSize,
+        fillSize * cellSize,
+      );
+    }
   });
-}
-
-function drawImageFore(contextData) {
-  const {
-    cellSize, size, mask, options,
-  } = contextData;
-  const maskLayer = mask();
-  const foreground = QRCanvas.drawCanvas(QRCanvas.getCanvas(size), {
-    cellSize,
-    size,
-    data: options.foreground,
-  });
-  const ctx = foreground.getContext('2d');
-  ctx.globalCompositeOperation = 'destination-in';
-  ctx.drawImage(maskLayer, 0, 0);
-  ctx.globalCompositeOperation = 'destination-over';
-  ctx.fillStyle = variables.colorLight;
-  ctx.fillRect(0, 0, size, size);
-  return foreground;
 }

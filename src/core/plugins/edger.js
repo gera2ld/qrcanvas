@@ -151,7 +151,7 @@ function bgClearer(isBackground, width, height) {
 /**
 * @desc Detect image edge based on canvas
 */
-function getEdger({ canvas, margin = 0, level }) {
+function getEdger({ canvas, margin, level }) {
   /**
    * @desc The default isBackgroundColor callback to decide
    * whether a color is background by its Alpha value.
@@ -179,19 +179,19 @@ function getEdger({ canvas, margin = 0, level }) {
  * - 0: do nothing
  * - 1: clear pixels covered by logo pixels
  * - 2: clear cells covered by logo pixels
- * - 3: clear a square area covered by logo image
+ * - 3: clear a rectangle area covered by logo image
  */
 const plugin = qrcanvas => {
   const { events } = qrcanvas;
   let transclude = {};
   let edger;
-  events.on('detectEdges', () => {
+  events.on('detectEdges', ({ data: canvas }) => {
     const {
       options: { logo },
       qrdata: { count, cellSize },
     } = qrcanvas;
     edger = getEdger({
-      canvas: logo.canvas,
+      canvas,
       margin: logo.margin,
       level: logo.clearEdges,
     });
@@ -221,7 +221,7 @@ const plugin = qrcanvas => {
       }
     }
   });
-  events.on('clearLogo', ({ canvas }) => {
+  events.on('clearLogo', ({ data: canvas }) => {
     const { options: { logo } } = qrcanvas;
     if (!logo.clearEdges || !edger.enabled) return;
     if ((logo.image || logo.text) && logo.clearEdges === 1) {

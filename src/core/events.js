@@ -23,10 +23,18 @@ export default class EventEmitter {
 
   emit(type, data) {
     const listeners = this.events[type];
+    const evt = {
+      data,
+      defaultPrevented: false,
+      preventDefault() {
+        evt.defaultPrevented = true;
+      },
+    };
     if (listeners) {
       listeners.forEach(listener => {
-        listener(data);
+        listener(evt);
       });
     }
+    return evt;
   }
 }

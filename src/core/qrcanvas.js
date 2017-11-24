@@ -10,10 +10,8 @@ const defaultOptions = () => ({
   // correctLevel can be 'L', 'M', 'Q' or 'H'
   correctLevel: 'L',
 
-  // cellSize is preferred to size
-  // if none is provided, use default values below
-  // * cellSize: 2,
-  // * size: cellSize * count,
+  // size of each cell in pixel
+  cellSize: 2,
 
   // foreground and background may be an image or a style string
   // or an array of objects with attributes below:
@@ -37,9 +35,6 @@ const defaultOptions = () => ({
   // Avoid transparent pixels
   noAlpha: true,
 
-  // Null or a canvas to be reused
-  reuseCanvas: null,
-
   /**
    * an image or text can be used as a logo
    * logo: {
@@ -53,10 +48,7 @@ const defaultOptions = () => ({
    *   fontFamily: string, default 'Cursive'
 
    *   // common
-   *   clearEdges: number, default 0
-   *       0 - not clear, just margin
-   *       1 - clear incomplete cells
-   *       2 - clear a larger rectangle area
+   *   clearEdges: number 0-3, default 0
    *   margin: number, default 2 for text and 0 for image
    *   size: float, default .15 stands for 15% of the QRCode
    * }
@@ -75,6 +67,7 @@ const defaultLogoOptions = () => ({
 export default class QRCanvas {
   constructor(options) {
     this.events = new EventEmitter();
+    this.cache = {};
     QRCanvas.plugins.forEach(plugin => plugin(this));
     this.setData(options || {});
   }
@@ -100,55 +93,88 @@ export default class QRCanvas {
     if (options.logo.text || options.logo.image || options.effect.key === 'image') {
       options.correctLevel = 'H';
     }
-    if (!options.cellSize && !options.size) {
-      options.cellSize = 2;
-    }
     this.options = options;
+  }
+
+  makeAll() {
     this.makeQR();
-    this.initLogo();
+    this.makeBackground();
+    this.makeLogo();
+    this.makeForeground();
+    this.make();
   }
 
   makeQR() {
-    const { typeNumber, correctLevel, data } = this.options;
+    const {
+      typeNumber, correctLevel, data, cellSize,
+    } = this.options;
     const qr = qrcode(typeNumber, correctLevel);
     qr.addData(data || '');
     qr.make();
     const count = qr.getModuleCount();
-    let { cellSize, size } = this.options;
-    if (cellSize) {
-      size = cellSize * count;
-    } else {
-      cellSize = size / count;
-    }
     this.qrdata = {
       cellSize,
-      size,
       count,
       qr,
+      size: count * cellSize,
     };
   }
 
-  isDark = (i, j) => {
-    const { count, qr } = this.qrdata;
-    return i >= 0 && i < count && j >= 0 && j < count
-    && this.shouldTransclude(i + j * count)
-    && qr.isDark(i, j);
+  makeBackground() {
+    const { noAlpha, background } = this.options;
+    this.cache.background = [
+      noAlpha && variables.colorLight,
+      background,
+    ];
   }
 
-  /**
-   * @desc Whether a cell should be transcluded by the foreground image.
-   */
-  shouldTransclude(index) { return true; }  // eslint-disable-line
+  makeForeground() {
+    const { foreground, effect } = this.options;
+    const { cellSize, size } = this.qrdata;
+    const effectInfo = effect && effects[effect.key] || effects.default;
+    QRCanvas.cacheCanvas(this.cache.foreground);
+    this.cache.foreground = (effectInfo.scenes || [{}]).map(scene => {
+      const mask = QRCanvas.getCanvas({ width: size });
+      effectInfo.draw({
+        effect,
+        canvas: mask,
+        isDark: this.isDark,
+        qrdata: this.qrdata,
+        context: mask.getContext('2d'),
+        colorDark: 'black',
+        ...applyConfig(scene.configMask, this.options),
+      });
+      const canvas = QRCanvas.drawCanvas(
+        QRCanvas.getCanvas({ width: size }),
+        {
+          cellSize,
+          data: foreground,
+          ...applyConfig(scene.configScene, this.options),
+        },
+      );
+      const ctx = canvas.getContext('2d');
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.drawImage(mask, 0, 0);
+      QRCanvas.cacheCanvas(mask);
+      this.events.emit('clearLogo', canvas);
+      return canvas;
+    });
+  }
 
   /**
    * @desc Initialize logo data, find out the proper width and height and draw
    * it to a canvas for later use.
    */
-  initLogo() {
+  makeLogo() {
     const { logo } = this.options;
     const { count, cellSize, size } = this.qrdata;
     let width;
     let height;
+    let canvas = this.cache.logo && this.cache.logo.image;
+    if (canvas) {
+      QRCanvas.cacheCanvas(canvas);
+      canvas = null;
+    }
     const normalize = () => {
       const k = width / height;
       const margin2 = 2 * logo.margin;
@@ -173,14 +199,17 @@ export default class QRCanvas {
       logo.height = (kl * height) | 0;
       logo.x = ((size - logo.width) >> 1) - logo.margin;
       logo.y = ((size - logo.height) >> 1) - logo.margin;
-      logo.canvas = QRCanvas.getCanvas(logo.width + 2 * logo.margin, logo.height + 2 * logo.margin);
+      canvas = QRCanvas.getCanvas({
+        width: logo.width + 2 * logo.margin,
+        height: logo.height + 2 * logo.margin,
+      });
     };
     if (logo.image) {
       const { image } = logo;
       width = image.naturalWidth || image.width;
       height = image.naturalHeight || image.height;
       normalize();
-      const ctx = logo.canvas.getContext('2d');
+      const ctx = canvas.getContext('2d');
       ctx.drawImage(logo.image, logo.margin, logo.margin, logo.width, logo.height);
     } else if (logo.text) {
       // get text width/height radio by assuming fontHeight=100px
@@ -192,7 +221,7 @@ export default class QRCanvas {
       ].filter(Boolean).join(' ');
       ({ width } = QRCanvas.measureText(logo.text, font));
       normalize();
-      const ctx = logo.canvas.getContext('2d');
+      const ctx = canvas.getContext('2d');
       ctx.font = [
         logo.fontStyle,
         `${logo.height}px`,
@@ -202,114 +231,62 @@ export default class QRCanvas {
       ctx.textBaseline = 'middle';
       ctx.fillStyle = logo.color;
       ctx.fillText(logo.text, (logo.width >> 1) + logo.margin, (logo.height >> 1) + logo.margin);
-    } else {
-      return;
     }
-    this.events.emit('detectEdges');
-  }
-
-  draw() {
-    const { count, cellSize, size } = this.qrdata;
-    const {
-      foreground, background, noAlpha, logo, reuseCanvas,
-    } = this.options;
-    const iCellSize = Math.ceil(cellSize);
-    const iSize = iCellSize * count;
-    const canvas = QRCanvas.getCanvas(iSize);
-    const contextData = {
-      count,
-      canvas,
-      context: canvas.getContext('2d'),
-      cellSize: iCellSize,
-      size: iSize,
-      colorDark: variables.colorDark,
-      isDark: this.isDark,
-      effect: effects[this.options.effect.key] || effects.default,
-      options: this.options,
+    if (canvas) {
+      this.events.emit('detectEdges', canvas);
+    }
+    this.cache.logo = canvas && {
+      image: canvas,
+      x: logo.x,
+      y: logo.y,
+      width: logo.width + 2 * logo.margin,
+      height: logo.height + 2 * logo.margin,
     };
-    this.drawCells(contextData);
-
-    // Allow plugins to clear some cells before drawing logo
-    this.events.emit('clearLogo', contextData);
-
-    // Draw foreground image within dark cells
-    const canvasFore = this.getForegroundArea(contextData, foreground);
-    const ctxFore = canvasFore.getContext('2d');
-    ctxFore.globalCompositeOperation = 'destination-in';
-    ctxFore.drawImage(contextData.canvas, 0, 0);
-
-    // 1. Draw white backgroud layer for non-transparent QR image
-    // 2. Draw background layer according to options
-    // 3. Draw foreground image with QRCode data
-    // 4. Draw logo
-    const canvasComplex = QRCanvas.drawCanvas(QRCanvas.getCanvas(iSize), {
-      cellSize: iCellSize,
-      size: iSize,
-      data: [
-        noAlpha && variables.colorLight,
-        background,
-        canvasFore,
-        logo.canvas && {
-          image: logo.canvas,
-          x: logo.x,
-          y: logo.y,
-          width: logo.width + 2 * logo.margin,
-          height: logo.height + 2 * logo.margin,
-        },
-      ].filter(Boolean),
-    });
-
-    // Stretch canvas if size is not equal to iSize
-    let canvasTarget = reuseCanvas;
-    if (canvasTarget) {
-      canvasTarget.width = size;
-      canvasTarget.height = size;
-    } else if (size !== iSize) {
-      canvasTarget = QRCanvas.getCanvas(size, size);
-    }
-    if (canvasTarget) {
-      const ctx = canvasTarget.getContext('2d');
-      ctx.drawImage(canvasComplex, 0, 0, size, size);
-    } else {
-      canvasTarget = canvasComplex;
-    }
-    return canvasTarget;
   }
 
-  drawCells(contextData) { // eslint-disable-line class-methods-use-this
-    const { effect } = contextData;
-    effect.data(contextData);
+  make() {
+    const { cellSize, size } = this.qrdata;
+    const { background, foreground, logo } = this.cache;
+    QRCanvas.cacheCanvas(this.cache.result);
+    const canvas = QRCanvas.drawCanvas(
+      QRCanvas.getCanvas({ width: size }),
+      {
+        cellSize,
+        data: [
+          background,
+          foreground,
+          logo,
+        ],
+      },
+    );
+    this.cache.result = canvas;
+  }
+
+  output({ size, canvas } = {}) {
+    const { size: iSize } = this.qrdata;
+    const computedSize = size || iSize;
+    const outputCanvas = QRCanvas.getCanvas({ canvas, width: computedSize });
+    const ctx = outputCanvas.getContext('2d');
+    ctx.drawImage(this.cache.result, 0, 0, computedSize, computedSize);
+    return outputCanvas;
+  }
+
+  isDark = (i, j) => {
+    const { count, qr } = this.qrdata;
+    return i >= 0 && i < count && j >= 0 && j < count
+    && this.shouldTransclude(i + j * count)
+    && qr.isDark(i, j);
   }
 
   /**
-   * @desc Create a canvas with original foreground image.
-   * The image will be shown only within dark cells at last.
+   * @desc Whether a cell should be transcluded by the foreground image.
    */
-  getForegroundArea(contextData, data) {
-    const { cellSize, size, effect } = contextData;
-    if (effect.foreground) {
-      return effect.foreground({
-        ...contextData,
-        mask: () => {
-          const canvas = QRCanvas.getCanvas(size);
-          const defaultEffect = effects.default;
-          this.drawCells({
-            ...contextData,
-            canvas,
-            context: canvas.getContext('2d'),
-            colorDark: 'black',
-            effect: defaultEffect,
-          });
-          return canvas;
-        },
-      });
-    }
-    return QRCanvas.drawCanvas(QRCanvas.getCanvas(size), {
-      cellSize,
-      size,
-      data,
-    });
-  }
+  shouldTransclude(index) { return true; }  // eslint-disable-line
+}
+
+function applyConfig(config, options) {
+  if (typeof config === 'function') return config(options);
+  return config;
 }
 
 QRCanvas.variables = variables;

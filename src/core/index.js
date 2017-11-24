@@ -5,7 +5,8 @@ import './plugins/edger';
 
 export default function qrcanvas(options) {
   const canvas = new QRCanvas(options);
-  return canvas.draw();
+  canvas.makeAll();
+  return canvas.output(options);
 }
 
 qrcanvas.QRCanvas = QRCanvas;

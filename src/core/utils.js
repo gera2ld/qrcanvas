@@ -1,16 +1,23 @@
 import QRCanvas from './qrcanvas';
 
+const cache = [];
+
 /**
  * @desc Create a new canvas.
  * @param {Int} width Width of the canvas.
  * @param {Int} height Height of the canvas.
  * @return {Canvas}
  */
-function getCanvas(width, height) {
-  const canvas = QRCanvas.createCanvas();
-  canvas.width = width;
-  canvas.height = height == null ? width : height;
-  return canvas;
+function getCanvas({ width, height, canvas }) {
+  const rCanvas = canvas || cache.pop() || QRCanvas.createCanvas();
+  rCanvas.width = width;
+  rCanvas.height = height == null ? width : height;
+  return rCanvas;
+}
+
+function cacheCanvas(canvas) {
+  if (Array.isArray(canvas)) cache.push(...canvas);
+  else if (QRCanvas.isCanvas(canvas)) cache.push(canvas);
 }
 
 /**
@@ -18,18 +25,19 @@ function getCanvas(width, height) {
  * @param {Canvas} canvas The canvas to initialize.
  * @param {Object} options
  *    data: {Image} or {String} or {Array}
- *    size: {Int}
  *    cellSize: {Int}
  */
 function drawCanvas(canvas, options) {
-  const { data, cellSize, size } = options;
+  const { data, cellSize, clear } = options;
+  const size = canvas.width;
   let queue = [data];
+  const ctx = canvas.getContext('2d');
+  if (clear) ctx.clearRect(0, 0, canvas.width, canvas.height);
   while (queue.length) {
     const item = queue.shift();
     if (Array.isArray(item)) {
       queue = item.concat(queue);
     } else if (item) {
-      const ctx = canvas.getContext('2d');
       let obj;
       if (QRCanvas.isDrawable(item)) {
         obj = { image: item };
@@ -57,12 +65,13 @@ function drawCanvas(canvas, options) {
 
 let canvasText;
 function measureText(text, font) {
-  if (!canvasText) canvasText = getCanvas(100);
+  if (!canvasText) canvasText = getCanvas({ width: 100 });
   const ctx = canvasText.getContext('2d');
   ctx.font = font;
   return ctx.measureText(text);
 }
 
 QRCanvas.getCanvas = getCanvas;
+QRCanvas.cacheCanvas = cacheCanvas;
 QRCanvas.drawCanvas = drawCanvas;
 QRCanvas.measureText = measureText;
