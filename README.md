@@ -36,9 +36,6 @@ Quick Start
   <div id="qrcode"></div>
 
   <script src="https://unpkg.com/qrcanvas"></script>
-
-  <!-- A slim version is not bundled with any effects. -->
-  <script src="https://unpkg.com/qrcanvas/dist/qrcanvas.slim.js"></script>
   ```
 
   ``` js
