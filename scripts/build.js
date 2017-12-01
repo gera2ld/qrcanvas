@@ -4,7 +4,7 @@ const babel = require('rollup-plugin-babel');
 const alias = require('rollup-plugin-alias');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
-// const uglify = require('rollup-plugin-uglify');
+const uglify = require('rollup-plugin-uglify');
 
 [
   {
@@ -77,7 +77,29 @@ const commonjs = require('rollup-plugin-commonjs');
       commonjs(),
       // uglify(),
     ],
-  }
+  },
+  // for unpkg
+  {
+    input: 'src/entries/index.js',
+    file: 'dist/qrcanvas.min.js',
+    format: 'umd',
+    name: 'qrcanvas',
+    plugins: [
+      babel({
+        presets: [
+          ['env', { modules: false }],
+          'stage-2',
+        ],
+        plugins: [
+          'external-helpers',
+        ],
+        ignore: 'node_modules/**',
+      }),
+      resolve(),
+      commonjs(),
+      uglify(),
+    ],
+  },
 ].forEach(item => {
   rollup.rollup(item)
   .then(bundle => bundle.write(item))

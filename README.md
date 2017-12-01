@@ -35,7 +35,7 @@ Quick Start
   ``` html
   <div id="qrcode"></div>
 
-  <script src="https://unpkg.com/qrcanvas"></script>
+  <script src="https://unpkg.com/qrcanvas/dist/qrcanvas.min.js"></script>
   ```
 
   ``` js
