@@ -61,8 +61,9 @@ Quick Start
 
 More
 ---
-* [Demo](https://gera2ld.github.io/qrcanvas/)
 * [Docs](https://github.com/gera2ld/qrcanvas/wiki)
+* [Demo](https://gera2ld.github.io/qrcanvas/)
+* [Examples](https://gera2ld.github.io/qrcanvas/examples/)
 
 Snapshots
 ---
