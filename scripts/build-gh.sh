@@ -1,7 +1,6 @@
 set -e
-npm run lint
 rm -rf dist
-npm run demo
+cp -r demo dist
 cd dist
 git init
 git config user.name Gerald

@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>QRCanvas</title>
+<link rel="stylesheet" href="https://unpkg.com/spectre.css@0.5.1/docs/dist/spectre.min.css">
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/qrcanvas/dist/qrcanvas.js"></script>
+</head>
+<body>
+<a href="https://github.com/gera2ld/qrcanvas"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a>
+<div id="app" class="container" style="display:none" v-show="true">
+  <div class="mt-2">
+    <h2 class="d-inline-block">QRCode Generator</h2>
+    <a class="btn btn-link" href="https://github.com/gera2ld/qrcanvas/wiki">Wiki</a>
+    <a class="btn btn-link" href="examples/">Examples</a>
+  </div>
+  <div class="columns">
+    <div class="form-horizontal">
+      <div class="form-group">
+        <div class="column col-3">
+          <div class="form-label label-sm">Text:</div>
+        </div>
+        <div class="column">
+          <textarea class="form-input input-sm" v-model="settings.qrtext"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="column col-3">
+          <div class="form-label label-sm">Size:</div>
+        </div>
+        <div class="column">
+          <input class="form-input input-sm" type="range" min="2" max="10" v-model="settings.cellSize">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="column col-3">
+          <div class="form-label label-sm">Correct level:</div>
+        </div>
+        <div class="column">
+          <input class="form-input input-sm" type="range" min="0" max="3" v-model="settings.correctLevel">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="column col-3">
+          <div class="form-label label-sm">Effect:</div>
+        </div>
+        <div class="column">
+          <label class="form-radio input-sm" v-for="effect in effects">
+            <input type="radio" v-model="settings.effect" :value="effect.value">
+            <i class="form-icon"></i>
+            {{ effect.title }}
+          </label>
+          <div v-show="settings.effect">
+            <input class="form-input input-sm" type="range" min="0" max="100" step="5" v-model="settings.effectValue">
+            <div v-show="settings.effect === 'spot'">
+              <img src="https://user-images.githubusercontent.com/3139113/38300650-ed2c25c4-382f-11e8-9792-d46987eb17d1.png" ref="effect">
+              <input class="form-input input-sm" type="file" @change="loadImage($event,'effect')">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="column col-3">
+          <div class="form-label label-sm">Colors:</div>
+        </div>
+        <div class="column">
+          <div class="text-right">
+            <button class="btn btn-link btn-sm mr-1" v-for="theme in themes" v-text="theme" @click.prevent="loadTheme(theme)"></button>
+          </div>
+          <div class="form-label label-sm">Foreground</div>
+          <input class="form-input input-sm" type="color" v-model="settings.colorFore">
+          <div class="form-label label-sm">Background</div>
+          <input class="form-input input-sm" type="color" v-model="settings.colorBack">
+          <div class="form-label label-sm">Outside-border</div>
+          <input class="form-input input-sm" type="color" v-model="settings.colorOut">
+          <div class="form-label label-sm">Inside-border</div>
+          <input class="form-input input-sm" type="color" v-model="settings.colorIn">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="column col-4">
+          <label class="form-checkbox input-sm">
+            <input type="checkbox" v-model="settings.logo">
+            <i class="form-icon"></i>
+            Add Logo
+          </label>
+        </div>
+        <ul class="tab column" v-show="settings.logo">
+          <li class="tab-item" :class="{ active: settings.logoType === 'image' }">
+            <a href="#" @click.prevent="settings.logoType = 'image'">Image</a>
+          </li>
+          <li class="tab-item" :class="{ active: settings.logoType === 'text' }">
+            <a href="#" @click.prevent="settings.logoType = 'text'">Text</a>
+          </li>
+        </ul>
+      </div>
+      <div class="form-group" v-show="settings.logo">
+        <div class="column">
+          <div class="form-group" v-show="settings.logoType === 'image'">
+            <div class="column col-3">
+              <label class="form-label label-sm">Image:</label>
+            </div>
+            <div class="column">
+              <img src="https://user-images.githubusercontent.com/3139113/38300650-ed2c25c4-382f-11e8-9792-d46987eb17d1.png" ref="logo">
+              <input class="form-input input-sm" type="file" @change="loadImage($event,'logo')">
+            </div>
+          </div>
+          <div v-show="settings.logoType === 'text'">
+            <div class="form-group">
+              <div class="column col-3">
+                <label class="form-label label-sm">Text:</label>
+              </div>
+              <div class="column">
+                <input class="form-input input-sm" v-model="settings.logoText">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="column col-3">
+                <label class="form-label label-sm">Font:</label>
+              </div>
+              <div class="column">
+                <input class="form-input input-sm" placeholder="CSS font string" v-model="settings.logoFont">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="column col-3">
+                <label class="form-label label-sm">Color:</label>
+              </div>
+              <div class="column">
+                <input class="form-input input-sm" type="color" v-model="settings.logoColor">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="column">
+                <label class="form-checkbox input-sm">
+                  <input type="checkbox" v-model="settings.logoBold">
+                  <i class="form-icon"></i>
+                  Bold
+                </label>
+              </div>
+              <div class="column">
+                <label class="form-checkbox input-sm">
+                  <input type="checkbox" v-model="settings.logoItalic">
+                  <i class="form-icon"></i>
+                  Italic
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="column col-3">
+              <label class="form-label label-sm">Size:</label>
+            </div>
+            <div class="column">
+              <input class="form-input input-sm" type="range" min="5" max="20" v-model="settings.logoSize">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="column col-3">
+              <label class="form-label label-sm">Clear edges:</label>
+            </div>
+            <div class="column">
+              <input class="form-input input-sm" type="range" min="0" max="3" v-model="settings.logoClearEdges">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="column col-3">
+              <label class="form-label label-sm">Margin:</label>
+            </div>
+            <div class="column">
+              <input class="form-input input-sm" type="range" min="0" max="10" v-model="settings.logoMargin">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card mb-2">
+        <div class="card-body">
+          <div>For a great QRCode tool, see <a target="_blank" href="https://intellilab.github.io/transformers/url-builder/">Transformers</a>.</div>
+        </div>
+      </div>
+      <qr-canvas :options="options"></qr-canvas>
+    </div>
+  </div>
+</div>
+<script src="index.js"></script>
+</body>
+</html>
