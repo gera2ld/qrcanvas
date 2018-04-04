@@ -143,6 +143,7 @@ new Vue({
       const reader = new FileReader();
       reader.onload = () => {
         this.$refs[ref].src = reader.result;
+        this.options = Object.assign({}, this.options);
       };
       reader.readAsDataURL(file);
     },
