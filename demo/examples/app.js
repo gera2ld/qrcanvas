@@ -14,7 +14,7 @@ demos.forEach(item => {
     className: 'menu-item',
   }, [
     item.el = createElement('a', {
-      href: `#${item.name}`,
+      href: `#${item.path}`,
       textContent: item.name,
     }),
   ]));
@@ -24,8 +24,8 @@ window.addEventListener('hashchange', handleHashChange, false);
 handleHashChange();
 
 function handleHashChange() {
-  const name = window.location.hash.slice(1);
-  const item = demos.find(item => item.name === name) || demos[0];
+  const path = window.location.hash.slice(1);
+  const item = demos.find(item => item.path === path) || demos[0];
   showDemo(item);
 }
 
