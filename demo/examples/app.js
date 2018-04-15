@@ -23,6 +23,8 @@ demos.forEach(item => {
 window.addEventListener('hashchange', handleHashChange, false);
 handleHashChange();
 
+FallbackJs.ok();
+
 function handleHashChange() {
   const path = window.location.hash.slice(1);
   const item = demos.find(item => item.path === path) || demos[0];
