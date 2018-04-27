@@ -16,7 +16,7 @@ Installation
 ---
 
 ``` sh
-$ npm i qrcanvas
+$ yarn add qrcanvas
 ```
 
 Quick Start
@@ -39,7 +39,7 @@ Quick Start
   ```
 
   ``` js
-  var canvas = qrcanvas({
+  const canvas = qrcanvas({
     data: 'hello, world'
   });
   document.getElementById('qrcode').appendChild(canvas);
@@ -61,9 +61,12 @@ Quick Start
 
 More
 ---
-* [Docs](https://github.com/gera2ld/qrcanvas/wiki)
-* [Demo](https://gera2ld.github.io/qrcanvas/)
-* [Examples](https://gera2ld.github.io/qrcanvas/examples/)
+- [Docs](https://github.com/gera2ld/qrcanvas/wiki)
+- [Demo](https://gera2ld.github.io/qrcanvas/)
+- [Examples](https://gera2ld.github.io/qrcanvas/examples/)
+- Use with other libraries
+  - [qrcanvas-vue](https://github.com/gera2ld/qrcanvas-vue)
+  - [qrcanvas-react](https://github.com/gera2ld/qrcanvas-react)
 
 Snapshots
 ---
