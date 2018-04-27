@@ -40,7 +40,6 @@ function showDemo(item) {
   .then(item => {
     content.innerHTML = '';
     let container;
-    let code;
     content.append(
       createElement('h3', { textContent: item.name }),
       container = createElement('div', {
@@ -50,11 +49,10 @@ function showDemo(item) {
         className: 'code',
       }, [
         code = createElement('code', {
-          textContent: item.code,
+          innerHTML: Prism.highlight(item.code, Prism.languages.javascript),
         }),
       ]),
     );
-    hljs.highlightBlock(code);
     const fn = new Function('container', item.code);
     container.innerHTML = LOADER;
     fn({
