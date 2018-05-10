@@ -71,6 +71,6 @@ More
 Snapshots
 ---
 
-![1](snapshots/1.png)
+![1](https://user-images.githubusercontent.com/3139113/39859468-8acec31a-546c-11e8-83b6-10e889423e88.png)
 
-![2](snapshots/2.png)
+![2](https://user-images.githubusercontent.com/3139113/39859482-9b6c0d68-546c-11e8-83cd-d03a148c3e70.png)

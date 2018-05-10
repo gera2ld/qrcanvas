@@ -1,7 +1,5 @@
-// http://eslint.org/docs/user-guide/configuring
-
 module.exports = {
-  root: true,
+  extends: 'airbnb-base',
   parser: 'babel-eslint',
   parserOptions: {
     sourceType: 'module'
@@ -9,35 +7,19 @@ module.exports = {
   env: {
     browser: true,
   },
-  extends: 'airbnb-base',
-  // check if imports actually resolve
-  'settings': {
-    'import/resolver': {
-    }
-  },
-  // add your custom rules here
-  'rules': {
-    'import/extensions': ['error', 'always', {
-      'js': 'never',
-    }],
-    // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-    'no-console': ['error', {
-      allow: ['error', 'warn'],
-    }],
-    'no-param-reassign': ['error', {
-      props: false,
-    }],
-    'array-callback-return': ['off'],
-    'consistent-return': ['off'],
+  plugins: [
+    'import'
+  ],
+  rules: {
     'no-use-before-define': ['error', 'nofunc'],
-    'object-shorthand': ['error', 'always'],
-    'no-mixed-operators': ['off'],
-    'no-bitwise': ['error', { int32Hint: true, allow: ['>>'] }],
-    'no-underscore-dangle': ['off'],
+    'no-mixed-operators': 0,
     'arrow-parens': 0,
+    'no-plusplus': 0,
+    'no-param-reassign': 0,
+    'consistent-return': 0,
+    'no-console': ['warn', {
+      allow: ['error', 'warn', 'info'],
+    }],
+    'no-bitwise': 'off',
   },
-  globals: {
-    // add globals here
-  },
-}
+};
