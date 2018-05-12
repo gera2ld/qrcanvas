@@ -2,6 +2,9 @@ import qrcode from 'qrcode-generator';
 import EventEmitter from './events';
 import { variables, effects, plugins } from './config';
 
+// Enable UTF_8 support
+qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+
 const defaultOptions = () => ({
   // typeNumber belongs to 1..40
   // otherwise it will be increased to the smallest valid number
