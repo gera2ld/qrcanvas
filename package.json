@@ -9,7 +9,8 @@
     "prebuild": "yarn lint && gulp clean",
     "build": "cross-env NODE_ENV=production gulp build",
     "lint": "eslint .",
-    "prepush": "yarn lint"
+    "prepush": "yarn lint",
+    "deploy": "sh scripts/build-gh.sh"
   },
   "title": "QRCanvas",
   "main": "dist/qrcanvas.common.js",
