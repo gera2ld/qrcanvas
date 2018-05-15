@@ -35,8 +35,8 @@ function drawDefault(contextData) {
 function drawCells({ qrdata: { cellSize, count } }, drawEach) {
   for (let i = 0; i < count; i += 1) {
     for (let j = 0; j < count; j += 1) {
-      const x = i * cellSize;
-      const y = j * cellSize;
+      const x = j * cellSize;
+      const y = i * cellSize;
       drawEach({
         i, j, x, y,
       });
