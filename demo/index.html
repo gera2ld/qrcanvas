@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://unpkg.com/spectre.css@0.5.1/docs/dist/spectre.min.css">
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
-<script src="https://unpkg.com/qrcanvas/dist/qrcanvas.js"></script>
+<script src="https://unpkg.com/qrcanvas/dist/qrcanvas.min.js"></script>
 <script>
 var _hmt = _hmt || [];
 (function() {
@@ -40,7 +40,7 @@ var _hmt = _hmt || [];
           <div class="form-label label-sm">Size:</div>
         </div>
         <div class="column">
-          <input class="form-input input-sm" type="range" min="2" max="10" v-model="settings.cellSize">
+          <input class="form-input input-sm" type="range" min="2" max="25" v-model="settings.cellSize">
         </div>
       </div>
       <div class="form-group">
