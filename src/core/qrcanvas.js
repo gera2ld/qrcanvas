@@ -277,7 +277,7 @@ export default class QRCanvas {
   isDark = (i, j) => {
     const { count, qr } = this.qrdata;
     return i >= 0 && i < count && j >= 0 && j < count
-    && this.shouldTransclude(i + j * count)
+    && this.shouldTransclude(i * count + j)
     && qr.isDark(i, j);
   }
 
