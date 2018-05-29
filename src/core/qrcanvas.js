@@ -171,21 +171,17 @@ export default class QRCanvas {
   makeLogo() {
     const { logo } = this.options;
     const { count, cellSize, size } = this.qrdata;
-    let width;
-    let height;
     let canvas = this.cache.logo && this.cache.logo.image;
     if (canvas) {
       QRCanvas.cacheCanvas(canvas);
       canvas = null;
     }
-    const normalize = () => {
-      const k = width / height;
+    const normalize = k => {
       const margin2 = 2 * logo.margin;
+      const height = size;
+      const width = k * height;
       let iHeight = Math.min(
-        Math.sqrt(Math.min(
-          (width + margin2) * (height + margin2) / size / size,
-          logo.size,
-        ) / k) * count,
+        count * Math.sqrt(logo.size / k),
         count / k,
       ) | 0;
       let iWidth = (k * iHeight) | 0;
@@ -209,21 +205,19 @@ export default class QRCanvas {
     };
     if (logo.image) {
       const { image } = logo;
-      width = image.naturalWidth || image.width;
-      height = image.naturalHeight || image.height;
-      normalize();
+      normalize(image.naturalWidth / image.naturalHeight);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(logo.image, logo.margin, logo.margin, logo.width, logo.height);
     } else if (logo.text) {
-      // get text width/height radio by assuming fontHeight=100px
-      height = 100;
+      // get text width / height radio by assuming fontHeight = 100
+      const tHeight = 100;
       const font = [
         logo.fontStyle,
-        `${height}px`,
+        `${tHeight}px`,
         logo.fontFamily,
       ].filter(Boolean).join(' ');
-      ({ width } = QRCanvas.measureText(logo.text, font));
-      normalize();
+      const { width: tWidth } = QRCanvas.measureText(logo.text, font);
+      normalize(tWidth / tHeight);
       const ctx = canvas.getContext('2d');
       ctx.font = [
         logo.fontStyle,
