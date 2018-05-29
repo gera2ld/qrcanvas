@@ -225,10 +225,10 @@ const plugin = qrcanvas => {
     const { options: { logo } } = qrcanvas;
     if (!logo.clearEdges || !edger.enabled) return;
     if ((logo.image || logo.text) && logo.clearEdges === 1) {
-      const canvasLogo = QRCanvas.getCanvas(
-        logo.width + 2 * logo.margin,
-        logo.height + 2 * logo.margin,
-      );
+      const canvasLogo = QRCanvas.getCanvas({
+        width: logo.width + 2 * logo.margin,
+        height: logo.height + 2 * logo.margin,
+      });
       const ctxLogo = canvasLogo.getContext('2d');
       ctxLogo.fillStyle = 'white';
       ctxLogo.fillRect(0, 0, canvasLogo.width, canvasLogo.height);
