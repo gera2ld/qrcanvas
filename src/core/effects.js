@@ -96,27 +96,27 @@ function drawLiquid(contextData) {
     const corners = [0, 0, 0, 0]; // NW, NE, SE, SW
     if (isDark(i - 1, j)) {
       corners[0] += 1;
-      corners[3] += 1;
+      corners[1] += 1;
     }
     if (isDark(i + 1, j)) {
-      corners[1] += 1;
       corners[2] += 1;
+      corners[3] += 1;
     }
     if (isDark(i, j - 1)) {
       corners[0] += 1;
-      corners[1] += 1;
+      corners[3] += 1;
     }
     if (isDark(i, j + 1)) {
+      corners[1] += 1;
       corners[2] += 1;
-      corners[3] += 1;
     }
     // draw cell
     context.fillStyle = colorDark;
     if (isDark(i, j)) {
       if (isDark(i - 1, j - 1)) corners[0] += 1;
-      if (isDark(i + 1, j - 1)) corners[1] += 1;
+      if (isDark(i - 1, j + 1)) corners[1] += 1;
       if (isDark(i + 1, j + 1)) corners[2] += 1;
-      if (isDark(i - 1, j + 1)) corners[3] += 1;
+      if (isDark(i + 1, j - 1)) corners[3] += 1;
       context.moveTo(x + 0.5 * cellSize, y);
       drawCorner(
         context,
