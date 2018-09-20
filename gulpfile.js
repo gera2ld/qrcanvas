@@ -51,7 +51,21 @@ const rollupConfig = [
     },
     output: {
       format: 'cjs',
-      file: `${DIST}/index.common.js`,
+      file: `${DIST}/qrcanvas.common.js`,
+    },
+  },
+  {
+    input: {
+      input: 'src/node.js',
+      plugins: getRollupPlugins(),
+      external: getExternal([
+        'qrcode-generator',
+        'canvas',
+      ]),
+    },
+    output: {
+      format: 'cjs',
+      file: `${DIST}/qrcanvas.node.js`,
     },
   },
   {
@@ -61,7 +75,7 @@ const rollupConfig = [
     },
     output: {
       format: 'umd',
-      file: `${DIST}/index.js`,
+      file: `${DIST}/qrcanvas.js`,
       name: 'qrcanvas',
     },
     minify: true,

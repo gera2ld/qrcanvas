@@ -18,8 +18,8 @@
     }
   },
   "title": "QRCanvas",
-  "main": "lib/index.common.js",
-  "unpkg": "lib/index.min.js",
+  "main": "lib/qrcanvas.common.js",
+  "unpkg": "lib/qrcanvas.min.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:gera2ld/qrcanvas.git"
