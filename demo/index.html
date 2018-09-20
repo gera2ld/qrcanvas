@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://unpkg.com/spectre.css@0.5.1/docs/dist/spectre.min.css">
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
-<script src="https://unpkg.com/qrcanvas/dist/qrcanvas.min.js"></script>
+<script src="https://unpkg.com/qrcanvas/lib/qrcanvas.min.js"></script>
 <script>
 var _hmt = _hmt || [];
 (function() {
@@ -112,7 +112,7 @@ var _hmt = _hmt || [];
               <label class="form-label label-sm">Image:</label>
             </div>
             <div class="column">
-              <img src="https://user-images.githubusercontent.com/3139113/38300650-ed2c25c4-382f-11e8-9792-d46987eb17d1.png" ref="logo">
+              <img src="https://user-images.githubusercontent.com/3139113/38300650-ed2c25c4-382f-11e8-9792-d46987eb17d1.png" ref="logo" @load="update">
               <input class="form-input input-sm" type="file" @change="loadImage($event,'logo')">
             </div>
           </div>
@@ -156,14 +156,6 @@ var _hmt = _hmt || [];
                   Italic
                 </label>
               </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="column col-3">
-              <label class="form-label label-sm">Size:</label>
-            </div>
-            <div class="column">
-              <input class="form-input input-sm" type="range" min="5" max="20" v-model="settings.logoSize">
             </div>
           </div>
           <div class="form-group">

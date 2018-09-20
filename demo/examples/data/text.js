@@ -3,9 +3,7 @@ const canvas = qrcanvas.qrcanvas({
   correctLevel: 'H',
   data: 'hello, world',
   logo: {
-    text: 'QRCanvas',
-    clearEdges: 2,
-    size: .3,
+    image: qrcanvas.helpers.drawText('QRCanvas'),
   },
 });
 container.appendChild(canvas);

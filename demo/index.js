@@ -58,9 +58,9 @@ const data = {
     logo: false,
     logoType: 'image',
     logoText: 'Gerald',
-    logoSize: 15,
     logoClearEdges: 3,
     logoMargin: 0,
+    logoColor: '#000000',
     correctLevel: 0,
   }, themes.classic),
   effects: [
@@ -111,22 +111,18 @@ new Vue({
       if (settings.logo) {
         options.logo = {
           clearEdges: +settings.logoClearEdges,
-          size: settings.logoSize / 100,
           margin: +settings.logoMargin,
         };
         if (settings.logoType === 'image') {
           options.logo.image = this.$refs.logo;
         } else {
-          const fontFamily = settings.logoFont;
-          if (fontFamily) options.logo.fontFamily = fontFamily;
-          const fontStyle = [
-            settings.logoItalic && 'italic',
-            settings.logoBold && 'bold',
-          ].filter(Boolean).join(' ');
-          Object.assign(options.logo, {
-            text: settings.logoText,
+          options.logo.image = qrcanvas.helpers.drawText(settings.logoText, {
+            fontStyle: [
+              settings.logoBold && 'bold',
+              settings.logoItalic && 'italic',
+            ].filter(Boolean).join(' '),
+            fontFamily: settings.logoFont,
             color: settings.logoColor,
-            fontStyle,
           });
         }
       }
