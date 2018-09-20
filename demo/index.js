@@ -1,17 +1,21 @@
 /* global qrcanvas, Vue */
 /* eslint-disable object-curly-newline */
 
+const size = 256;
+
 const QrCanvas = {
   props: {
     options: Object,
   },
-  render: h => h('canvas'),
+  render: h => h('canvas', {
+    attrs: { width: size, height: size },
+  }),
   methods: {
     update(options) {
       const qroptions = Object.assign({}, options, {
         canvas: this.$el,
       });
-      qrcanvas(qroptions);
+      qrcanvas.qrcanvas(qroptions);
     },
   },
   watch: {
@@ -61,7 +65,7 @@ const data = {
   }, themes.classic),
   effects: [
     { title: 'None', value: '' },
-    { title: 'Liquid', value: 'liquid' },
+    { title: 'Fusion', value: 'fusion' },
     { title: 'Round', value: 'round' },
     { title: 'Spot', value: 'spot' },
   ],
@@ -128,7 +132,7 @@ new Vue({
       }
       if (settings.effect) {
         options.effect = {
-          key: settings.effect,
+          type: settings.effect,
           value: settings.effectValue / 100,
         };
         if (settings.effect === 'spot') {

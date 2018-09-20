@@ -1,6 +1,17 @@
-import QRCanvas from './qrcanvas';
-
 const cache = [];
+const notImplemented = () => {
+  throw new Error('Not implemented');
+};
+const helpers = {
+  createCanvas: notImplemented,
+  isCanvas: notImplemented,
+  isDrawable: notImplemented,
+  getCanvas,
+  cacheCanvas,
+  drawCanvas,
+  measureText,
+};
+export default helpers;
 
 /**
  * @desc Create a new canvas.
@@ -9,15 +20,14 @@ const cache = [];
  * @return {Canvas}
  */
 function getCanvas({ width, height, canvas }) {
-  const rCanvas = canvas || cache.pop() || QRCanvas.createCanvas();
+  const rCanvas = canvas || cache.pop() || helpers.createCanvas();
   rCanvas.width = width;
   rCanvas.height = height == null ? width : height;
   return rCanvas;
 }
 
-function cacheCanvas(canvas) {
-  if (Array.isArray(canvas)) cache.push(...canvas);
-  else if (QRCanvas.isCanvas(canvas)) cache.push(canvas);
+function cacheCanvas(...args) {
+  cache.push(...args);
 }
 
 /**
@@ -27,31 +37,32 @@ function cacheCanvas(canvas) {
  *    data: {Image} or {String} or {Array}
  *    cellSize: {Int}
  */
-function drawCanvas(canvas, options) {
-  const { data, cellSize, clear } = options;
-  const size = canvas.width;
+function drawCanvas(canvas, data, options) {
+  const { cellSize, context, clear = true } = options || {};
+  const { width, height } = canvas;
   let queue = [data];
-  const ctx = canvas.getContext('2d');
-  if (clear) ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const ctx = context || canvas.getContext('2d');
+  if (clear) ctx.clearRect(0, 0, width, height);
+  ctx.globalCompositeOperation = 'source-over';
   while (queue.length) {
     const item = queue.shift();
     if (Array.isArray(item)) {
       queue = item.concat(queue);
     } else if (item) {
       let obj;
-      if (QRCanvas.isDrawable(item)) {
+      if (helpers.isDrawable(item)) {
         obj = { image: item };
       } else if (typeof item === 'string') {
         obj = { style: item };
       } else {
         obj = item;
       }
-      let x = (('col' in obj) ? obj.col * cellSize : obj.x) || 0;
-      let y = (('row' in obj) ? obj.row * cellSize : obj.y) || 0;
-      if (x < 0) x += size;
-      if (y < 0) y += size;
-      const w = (('cols' in obj) ? obj.cols * cellSize : obj.width) || size;
-      const h = (('rows' in obj) ? obj.rows * cellSize : obj.height) || size;
+      let x = ('col' in obj ? obj.col * cellSize : obj.x) || 0;
+      let y = ('row' in obj ? obj.row * cellSize : obj.y) || 0;
+      if (x < 0) x += width;
+      if (y < 0) y += width;
+      const w = ('cols' in obj ? obj.cols * cellSize : obj.w) || width;
+      const h = ('rows' in obj ? obj.rows * cellSize : obj.h) || width;
       if (obj.image) {
         ctx.drawImage(obj.image, x, y, w, h);
       } else {
@@ -70,8 +81,3 @@ function measureText(text, font) {
   ctx.font = font;
   return ctx.measureText(text);
 }
-
-QRCanvas.getCanvas = getCanvas;
-QRCanvas.cacheCanvas = cacheCanvas;
-QRCanvas.drawCanvas = drawCanvas;
-QRCanvas.measureText = measureText;

@@ -25,7 +25,7 @@ Quick Start
 * Use in modules
 
   ``` js
-  import qrcanvas from 'qrcanvas';
+  import { qrcanvas } from 'qrcanvas';
   ```
 
 * Use in browser

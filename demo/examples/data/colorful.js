@@ -1,7 +1,7 @@
 const colorFore = '#55a';
 const colorOut = '#c33';
 const colorIn = '#621';
-const canvas = qrcanvas({
+const canvas = qrcanvas.qrcanvas({
   cellSize: 8,
   correctLevel: 'H',
   data: 'hello, world',
