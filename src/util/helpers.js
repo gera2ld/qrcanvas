@@ -1,3 +1,5 @@
+import { COLOR_BLACK, COLOR_WHITE } from './consts';
+
 const cache = [];
 const notImplemented = () => {
   throw new Error('Not implemented');
@@ -9,7 +11,7 @@ const helpers = {
   getCanvas,
   cacheCanvas,
   drawCanvas,
-  measureText,
+  drawText,
 };
 export default helpers;
 
@@ -19,10 +21,12 @@ export default helpers;
  * @param {Int} height Height of the canvas.
  * @return {Canvas}
  */
-function getCanvas({ width, height, canvas }) {
+function getCanvas({ width, height, canvas } = {}) {
   const rCanvas = canvas || cache.pop() || helpers.createCanvas();
-  rCanvas.width = width;
-  rCanvas.height = height == null ? width : height;
+  if (width) {
+    rCanvas.width = width;
+    rCanvas.height = height == null ? width : height;
+  }
   return rCanvas;
 }
 
@@ -33,9 +37,10 @@ function cacheCanvas(...args) {
 /**
  * @desc Draw to the canvas with given image or colors.
  * @param {Canvas} canvas The canvas to initialize.
+ * @param {Image | String | Array} data
  * @param {Object} options
- *    data: {Image} or {String} or {Array}
  *    cellSize: {Int}
+ *    clear: {Boolean}
  */
 function drawCanvas(canvas, data, options) {
   const { cellSize, context, clear = true } = options || {};
@@ -74,10 +79,39 @@ function drawCanvas(canvas, data, options) {
   return canvas;
 }
 
-let canvasText;
-function measureText(text, font) {
-  if (!canvasText) canvasText = getCanvas({ width: 100 });
-  const ctx = canvasText.getContext('2d');
-  ctx.font = font;
-  return ctx.measureText(text);
+function drawText(text, options) {
+  const {
+    fontSize = 32,
+    fontStyle = '', // italic bold
+    fontFamily = 'Cursive',
+    paddingX = 8,
+    paddingY = 8,
+    color,
+    background = COLOR_WHITE,
+  } = options || {};
+  const canvas = getCanvas();
+  const ctx = canvas.getContext('2d');
+  const height = fontSize + 2 * paddingY;
+  const font = [
+    fontStyle,
+    `${fontSize}px`,
+    fontFamily,
+  ].filter(Boolean).join(' ');
+  const resetContext = () => {
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = font;
+  };
+  resetContext();
+  const width = ctx.measureText(text).width + 2 * paddingX;
+  canvas.width = width;
+  canvas.height = height;
+  resetContext();
+  if (background) {
+    ctx.fillStyle = background;
+    ctx.fillRect(0, 0, width, height);
+  }
+  ctx.fillStyle = color || COLOR_BLACK;
+  ctx.fillText(text, width / 2, height / 2);
+  return canvas;
 }

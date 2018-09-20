@@ -25,14 +25,12 @@ export default class QRCanvasRenderer {
       ...this.options,
       ...options,
     };
-    let { effect } = this.options;
-    if (typeof effect === 'string') {
-      effect = { type: effect };
-    }
-    this.options.effect = effect || {};
-    const {
-      typeNumber, correctLevel, data,
-    } = this.options;
+    this.normalizeEffect();
+    this.normalizeLogo();
+    const { typeNumber, data, logo } = this.options;
+    // L / M / Q / H
+    let { correctLevel } = this.options;
+    if (logo && ['Q', 'H'].indexOf(correctLevel) < 0) correctLevel = 'H';
     const qr = qrcode(typeNumber, correctLevel);
     qr.addData(data || '');
     qr.make();
@@ -43,11 +41,33 @@ export default class QRCanvasRenderer {
     };
   }
 
+  normalizeEffect() {
+    let { effect } = this.options;
+    if (typeof effect === 'string') {
+      effect = { type: effect };
+    }
+    this.options.effect = effect || {};
+  }
+
+  normalizeLogo() {
+    const { isDrawable } = helpers;
+    let { logo } = this.options;
+    if (logo) {
+      if (isDrawable(logo)) {
+        logo = { image: logo };
+      } else if (!isDrawable(logo.image)) {
+        logo = null;
+      }
+    }
+    this.options.logo = logo;
+  }
+
   render(canvas, config = {}) {
     const {
       background = 'white',
       foreground = 'black',
       effect,
+      logo,
     } = this.options;
     const onRender = effects[effect.type] || effects.default;
     const {
@@ -83,12 +103,32 @@ export default class QRCanvasRenderer {
         ...this.cache,
       }, this.options.effect);
     }
+    let logoLayer;
+    if (logo) {
+      logoLayer = { ...logo };
+      if (!logo.w && !logo.h && !logo.cols && !logo.rows) {
+        const logoRatio = Math.min((count - 18) / count, 0.38);
+        const { width, height } = logo.image;
+        const ratio = width / height;
+        const maxSize = size * logoRatio;
+        const w = Math.min(maxSize, maxSize * ratio);
+        const h = Math.min(maxSize, maxSize / ratio);
+        const x = (size - w) / 2;
+        const y = (size - h) / 2;
+        logoLayer.w = w;
+        logoLayer.h = h;
+        logoLayer.x = x;
+        logoLayer.y = y;
+      }
+    }
     // Combine the layers
     drawCanvas(canvasOut, [
       { image: canvasBg },
       { image: canvasFg },
-    ], { clear: true });
+      logoLayer,
+    ].filter(Boolean), { clear: true });
     cacheCanvas(canvasBg, canvasFg);
+    return canvasOut;
   }
 
   isDark = (i, j) => {

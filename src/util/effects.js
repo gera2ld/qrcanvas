@@ -1,7 +1,5 @@
 import helpers from './helpers';
-
-const COLOR_BLACK = '#000';
-const COLOR_WHITE = '#fff';
+import { COLOR_BLACK, COLOR_WHITE } from './consts';
 
 export default {
   default: renderDefault,
