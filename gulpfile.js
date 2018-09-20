@@ -3,67 +3,68 @@ const gulp = require('gulp');
 const log = require('fancy-log');
 const rollup = require('rollup');
 const del = require('del');
-const rename = require('gulp-rename');
 const babel = require('rollup-plugin-babel');
+const replace = require('rollup-plugin-replace');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
-const replace = require('rollup-plugin-replace');
 const { uglify } = require('rollup-plugin-uglify');
 const pkg = require('./package.json');
 
-const DIST = 'dist';
+const DIST = 'lib';
 const IS_PROD = process.env.NODE_ENV === 'production';
 const values = {
   'process.env.VERSION': pkg.version,
   'process.env.NODE_ENV': process.env.NODE_ENV || 'development',
 };
 
-
-const rollupPlugins = [
+const getRollupPlugins = ({ babelConfig, browser } = {}) => [
+  babel({
+    exclude: 'node_modules/**',
+    ...browser ? {
+      // Combine all helpers at the top of the bundle
+      externalHelpers: true,
+    } : {
+      // Require helpers from '@babel/runtime'
+      runtimeHelpers: true,
+      plugins: [
+        '@babel/plugin-transform-runtime',
+      ],
+    },
+    ...babelConfig,
+  }),
+  replace({ values }),
   resolve(),
   commonjs(),
-  replace({ values }),
 ];
-const commonConfig = {
-  input: {
-    plugins: [
-      babel({
-        exclude: 'node_modules/**',
-        externalHelpers: true,
-      }),
-      ...rollupPlugins,
-    ],
-  },
+const getExternal = (externals = []) => id => {
+  return id.startsWith('@babel/runtime/') || externals.includes(id);
 };
+
 const rollupConfig = [
   {
     input: {
-      ...commonConfig.input,
-      input: 'src/entries/index.js',
+      input: 'src/index.js',
+      plugins: getRollupPlugins(),
+      external: getExternal([
+        'qrcode-generator',
+      ]),
     },
     output: {
-      ...commonConfig.output,
-      format: 'umd',
-      name: 'qrcanvas',
-      file: `${DIST}/qrcanvas.js`,
+      format: 'cjs',
+      file: `${DIST}/index.common.js`,
     },
-    minify: true,
   },
   {
     input: {
-      ...commonConfig.input,
-      input: 'src/entries/index.js',
-      external: [
-        'canvas',
-        'qrcode-generator',
-        path.resolve('src/entries/qrcanvas.common.js'),
-      ],
+      input: 'src/index.js',
+      plugins: getRollupPlugins({ browser: true }),
     },
     output: {
-      ...commonConfig.output,
-      format: 'cjs',
-      file: `${DIST}/qrcanvas.common.js`,
+      format: 'umd',
+      file: `${DIST}/index.js`,
+      name: 'qrcanvas',
     },
+    minify: true,
   },
 ];
 // Generate minified versions
@@ -89,28 +90,28 @@ function clean() {
   return del(DIST);
 }
 
-function buildRollup() {
+function buildJs() {
   return Promise.all(rollupConfig.map(config => {
     return rollup.rollup(config.input)
-    .then(bundle => bundle.write(config.output))
-    .catch(err => {
-      log(err.toString());
-    });
+    .then(bundle => bundle.write(config.output));
   }));
 }
 
-function buildNode() {
-  return gulp.src('src/entries/node.js')
-  .pipe(rename('qrcanvas.node.js'))
-  .pipe(gulp.dest(DIST));
+function wrapError(handle) {
+  const wrapped = () => handle()
+  .catch(err => {
+    log(err.toString());
+  });
+  wrapped.displayName = handle.name;
+  return wrapped;
 }
 
 function watch() {
-  gulp.watch('src/**', buildJs);
+  gulp.watch('src/**', safeBuildJs);
 }
 
-const buildJs = gulp.parallel(buildRollup, buildNode);
+const safeBuildJs = wrapError(buildJs);
 
 exports.clean = clean;
 exports.build = buildJs;
-exports.dev = gulp.series(buildJs, watch);
+exports.dev = gulp.series(safeBuildJs, watch);

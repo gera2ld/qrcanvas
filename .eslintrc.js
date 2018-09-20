@@ -8,7 +8,7 @@ module.exports = {
     browser: true,
   },
   plugins: [
-    'import'
+    'import',
   ],
   rules: {
     'no-use-before-define': ['error', 'nofunc'],
@@ -21,5 +21,6 @@ module.exports = {
       allow: ['error', 'warn', 'info'],
     }],
     'no-bitwise': 'off',
+    indent: ['error', 2, { MemberExpression: 0 }],
   },
 };
