@@ -112,12 +112,14 @@ export default class QRCanvasRenderer {
       if (logo) {
         const logoLayer = { ...logo };
         if (!logo.w && !logo.h && !logo.cols && !logo.rows) {
-          const logoRatio = Math.min((count - 18) / count, 0.38);
           const { width, height } = logo.image;
-          const ratio = width / height;
-          const maxSize = size * logoRatio;
-          const w = Math.min(maxSize, maxSize * ratio);
-          const h = Math.min(maxSize, maxSize / ratio);
+          const imageRatio = width / height;
+          const posRatio = Math.min((count - 18) / count, 0.38);
+          const h = Math.min(
+            size * posRatio,
+            size * posRatio / imageRatio,
+          );
+          const w = h * imageRatio;
           const x = (size - w) / 2;
           const y = (size - h) / 2;
           logoLayer.w = w;
