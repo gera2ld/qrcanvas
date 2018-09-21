@@ -81,7 +81,7 @@ function drawCanvas(canvas, data, options) {
 
 function drawText(text, options) {
   const {
-    fontSize = 32,
+    fontSize = 64,
     fontStyle = '', // italic bold
     fontFamily = 'Cursive',
     color,
