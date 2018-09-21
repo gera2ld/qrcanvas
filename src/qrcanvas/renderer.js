@@ -93,8 +93,7 @@ export default class QRCanvasRenderer {
     // Create foreground and background layers on canvas
     {
       const cellSize = Math.ceil(size / count);
-      const width = cellSize * count;
-      canvasBg = getCanvas({ width });
+      canvasBg = getCanvas({ width: cellSize * count });
       drawCanvas(canvasBg, background, { cellSize });
       canvasFg = onRender({
         foreground,
@@ -102,31 +101,31 @@ export default class QRCanvasRenderer {
         isDark: this.isDark,
         ...this.cache,
       }, this.options.effect);
-    }
-    let logoLayer;
-    if (logo) {
-      logoLayer = { ...logo };
-      if (!logo.w && !logo.h && !logo.cols && !logo.rows) {
-        const logoRatio = Math.min((count - 18) / count, 0.38);
-        const { width, height } = logo.image;
-        const ratio = width / height;
-        const maxSize = size * logoRatio;
-        const w = Math.min(maxSize, maxSize * ratio);
-        const h = Math.min(maxSize, maxSize / ratio);
-        const x = (size - w) / 2;
-        const y = (size - h) / 2;
-        logoLayer.w = w;
-        logoLayer.h = h;
-        logoLayer.x = x;
-        logoLayer.y = y;
+      // draw logo
+      if (logo) {
+        const logoLayer = { ...logo };
+        if (!logo.w && !logo.h && !logo.cols && !logo.rows) {
+          const logoRatio = Math.min((count - 18) / count, 0.38);
+          const { width, height } = logo.image;
+          const ratio = width / height;
+          const maxSize = size * logoRatio;
+          const w = Math.min(maxSize, maxSize * ratio);
+          const h = Math.min(maxSize, maxSize / ratio);
+          const x = (size - w) / 2;
+          const y = (size - h) / 2;
+          logoLayer.w = w;
+          logoLayer.h = h;
+          logoLayer.x = x;
+          logoLayer.y = y;
+        }
+        drawCanvas(canvasFg, logoLayer, { clear: false });
       }
     }
     // Combine the layers
     drawCanvas(canvasOut, [
       { image: canvasBg },
       { image: canvasFg },
-      logoLayer,
-    ].filter(Boolean), { clear: true });
+    ]);
     cacheCanvas(canvasBg, canvasFg);
     return canvasOut;
   }
