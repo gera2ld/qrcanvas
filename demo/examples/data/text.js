@@ -3,7 +3,10 @@ const canvas = qrcanvas.qrcanvas({
   correctLevel: 'H',
   data: 'hello, world',
   logo: {
-    image: qrcanvas.helpers.drawText('QRCanvas'),
+    text: 'QRCanvas',
+    options: {
+      color: 'dodgerblue',
+    },
   },
 });
 container.appendChild(canvas);

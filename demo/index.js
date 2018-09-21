@@ -109,21 +109,22 @@ new Vue({
         correctLevel: correctLevels[settings.correctLevel] || 'L',
       };
       if (settings.logo) {
-        options.logo = {
-          clearEdges: +settings.logoClearEdges,
-          margin: +settings.logoMargin,
-        };
         if (settings.logoType === 'image') {
-          options.logo.image = this.$refs.logo;
+          options.logo = {
+            image: this.$refs.logo,
+          };
         } else {
-          options.logo.image = qrcanvas.helpers.drawText(settings.logoText, {
-            fontStyle: [
-              settings.logoBold && 'bold',
-              settings.logoItalic && 'italic',
-            ].filter(Boolean).join(' '),
-            fontFamily: settings.logoFont,
-            color: settings.logoColor,
-          });
+          options.logo = {
+            text: settings.logoText,
+            options: {
+              fontStyle: [
+                settings.logoBold && 'bold',
+                settings.logoItalic && 'italic',
+              ].filter(Boolean).join(' '),
+              fontFamily: settings.logoFont,
+              color: settings.logoColor,
+            },
+          };
         }
       }
       if (settings.effect) {

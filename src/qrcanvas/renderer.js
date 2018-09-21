@@ -50,13 +50,20 @@ export default class QRCanvasRenderer {
   }
 
   normalizeLogo() {
-    const { isDrawable } = helpers;
+    const { isDrawable, drawText } = helpers;
     let { logo } = this.options;
     if (logo) {
       if (isDrawable(logo)) {
         logo = { image: logo };
       } else if (!isDrawable(logo.image)) {
-        logo = null;
+        if (typeof logo === 'string') {
+          logo = { text: logo };
+        }
+        if (typeof logo.text === 'string') {
+          logo = { image: drawText(logo.text, logo.options) };
+        } else {
+          logo = null;
+        }
       }
     }
     this.options.logo = logo;
