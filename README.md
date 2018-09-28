@@ -39,7 +39,7 @@ Quick Start
   ```
 
   ``` js
-  const canvas = qrcanvas({
+  const canvas = qrcanvas.qrcanvas({
     data: 'hello, world'
   });
   document.getElementById('qrcode').appendChild(canvas);
@@ -51,7 +51,7 @@ Quick Start
 
   ``` js
   const fs = require('fs');
-  const qrcanvas = require('qrcanvas/dist/qrcanvas.node.js');
+  const { qrcanvas } = require('qrcanvas/dist/qrcanvas.node.js');
   const canvas = qrcanvas({
     data: 'hello, world'
   });
