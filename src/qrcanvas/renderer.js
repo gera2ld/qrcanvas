@@ -100,6 +100,7 @@ export default class QRCanvasRenderer {
     // Create foreground and background layers on canvas
     {
       const cellSize = Math.ceil(size / count);
+      const sketchSize = cellSize * count;
       canvasBg = getCanvas({ width: cellSize * count });
       drawCanvas(canvasBg, background, { cellSize });
       canvasFg = onRender({
@@ -116,12 +117,12 @@ export default class QRCanvasRenderer {
           const imageRatio = width / height;
           const posRatio = Math.min((count - 18) / count, 0.38);
           const h = Math.min(
-            size * posRatio,
-            size * posRatio / imageRatio,
+            sketchSize * posRatio,
+            sketchSize * posRatio / imageRatio,
           );
           const w = h * imageRatio;
-          const x = (size - w) / 2;
-          const y = (size - h) / 2;
+          const x = (sketchSize - w) / 2;
+          const y = (sketchSize - h) / 2;
           logoLayer.w = w;
           logoLayer.h = h;
           logoLayer.x = x;
