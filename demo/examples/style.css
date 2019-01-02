@@ -15,6 +15,9 @@
   padding: 1em;
   overflow: auto;
 }
+#content canvas {
+  border: 1px solid #eee;
+}
 
 .flex-column {
   flex-direction: column;

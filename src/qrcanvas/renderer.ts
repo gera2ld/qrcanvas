@@ -6,9 +6,12 @@ import effects from '../util/effects';
 qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
 
 const DEFAULTS: QRCanvasOptions = {
+  background: 'white',
+  foreground: 'black',
   typeNumber: 0,
   correctLevel: 'L',
   data: '',
+  padding: 0,
 };
 
 interface QRCanvasRendererCache {
@@ -27,8 +30,9 @@ export default class QRCanvasRenderer {
 
   public render(canvas, config: QRCanvasRenderConfig = {}) {
     const {
-      background = 'white',
-      foreground = 'black',
+      background,
+      foreground,
+      padding,
       effect,
       logo,
     } = this.options;
@@ -88,9 +92,16 @@ export default class QRCanvasRenderer {
       }
     }
     // Combine the layers
+    const contentSize = size - padding - padding;
     drawCanvas(canvasOut, [
       { image: canvasBg },
-      { image: canvasFg },
+      {
+        image: canvasFg,
+        x: padding,
+        y: padding,
+        w: contentSize,
+        h: contentSize,
+      },
     ]);
     cacheCanvas(canvasBg, canvasFg);
     return canvasOut;

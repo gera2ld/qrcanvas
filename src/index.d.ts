@@ -9,6 +9,7 @@ interface QRCanvasOptions {
   cellSize?: number;
   background?: string;
   foreground?: string;
+  padding?: number;
   effect?: QRCanvasEffect;
   logo?: QRCanvasLayer;
 }

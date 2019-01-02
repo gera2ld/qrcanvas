@@ -8,6 +8,7 @@ const demos = [
   { name: 'Pure color', path: 'pure-color' },
   { name: 'Colorful', path: 'colorful' },
   { name: 'Unicode', path: 'unicode' },
+  { name: 'Padding', path: 'padding' },
 ];
 let active;
 demos.forEach(item => {
