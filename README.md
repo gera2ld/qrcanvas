@@ -35,7 +35,7 @@ Quick Start
   ``` html
   <div id="qrcode"></div>
 
-  <script src="https://unpkg.com/qrcanvas/dist/qrcanvas.min.js"></script>
+  <script src="https://unpkg.com/qrcanvas/lib/qrcanvas.min.js"></script>
   ```
 
   ``` js
@@ -51,7 +51,7 @@ Quick Start
 
   ``` js
   const fs = require('fs');
-  const { qrcanvas } = require('qrcanvas/dist/qrcanvas.node.js');
+  const { qrcanvas } = require('qrcanvas/lib/qrcanvas.node.js');
   const canvas = qrcanvas({
     data: 'hello, world'
   });
