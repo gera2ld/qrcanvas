@@ -4,21 +4,20 @@
   "description": "Generate characteristic qrcodes with a canvas.",
   "author": "Gerald <i@gerald.top>",
   "license": "ISC",
-  "scripts": {
-    "dev": "gulp dev",
-    "prebuild": "npm run lint && gulp clean",
-    "build": "cross-env NODE_ENV=production gulp build",
-    "lint": "eslint .",
-    "deploy": "sh scripts/build-gh.sh",
-    "prepublish": "npm run build"
-  },
   "husky": {
     "hooks": {
       "pre-push": "npm run lint"
     }
   },
+  "scripts": {
+    "dev": "gulp dev",
+    "prebuild": "npm run lint && gulp clean",
+    "build": "tsc && gulp build",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "deploy": "sh scripts/build-gh.sh",
+    "prepublish": "npm run build"
+  },
   "title": "QRCanvas",
-  "main": "lib/qrcanvas.common.js",
   "unpkg": "lib/qrcanvas.min.js",
   "repository": {
     "type": "git",
@@ -27,40 +26,45 @@
   "bugs": {
     "url": "https://github.com/gera2ld/qrcanvas/issues"
   },
+  "typings": "types/index.d.ts",
+  "main": "lib/qrcanvas.common.js",
+  "module": "lib/qrcanvas.esm.js",
   "files": [
-    "lib"
+    "lib",
+    "types"
   ],
   "devDependencies": {
-    "@babel/core": "^7.1.0",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-proposal-decorators": "^7.1.0",
-    "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
-    "@babel/plugin-proposal-function-sent": "^7.1.0",
-    "@babel/plugin-proposal-json-strings": "^7.0.0",
-    "@babel/plugin-proposal-numeric-separator": "^7.0.0",
-    "@babel/plugin-proposal-throw-expressions": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/plugin-syntax-import-meta": "^7.0.0",
-    "@babel/plugin-transform-runtime": "^7.1.0",
-    "@babel/preset-env": "^7.1.0",
-    "babel-eslint": "^9.0.0",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/plugin-proposal-decorators": "^7.2.3",
+    "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
+    "@babel/plugin-proposal-function-sent": "^7.2.0",
+    "@babel/plugin-proposal-json-strings": "^7.2.0",
+    "@babel/plugin-proposal-numeric-separator": "^7.2.0",
+    "@babel/plugin-proposal-throw-expressions": "^7.2.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-syntax-import-meta": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-typescript": "^7.1.0",
+    "babel-plugin-module-resolver": "^3.1.1",
     "cross-env": "^5.2.0",
     "del": "^3.0.0",
-    "eslint": "^5.6.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "fancy-log": "^1.3.2",
+    "fancy-log": "^1.3.3",
     "gulp": "^4.0.0",
-    "husky": "^1.0.0-rc.14",
-    "rollup": "^0.66.1",
-    "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-commonjs": "^9.1.8",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-replace": "^2.0.0",
-    "rollup-plugin-uglify": "^6.0.0"
+    "husky": "^1.3.1",
+    "rollup": "^1.0.0",
+    "rollup-plugin-alias": "^1.5.1",
+    "rollup-plugin-babel": "^4.2.0",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-replace": "^2.1.0",
+    "rollup-plugin-uglify": "^6.0.0",
+    "tslint": "^5.12.0",
+    "typescript": "^3.2.2"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0",
+    "@babel/runtime": "^7.2.0",
     "qrcode-generator": "^1.4.1"
   }
 }

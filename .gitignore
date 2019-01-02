@@ -4,3 +4,6 @@ node_modules
 /.idea
 /lib
 /dist
+/.nyc_output
+/coverage
+/types

@@ -1,5 +1,4 @@
-/* eslint-disable-next-line */
-import Canvas from 'canvas';
+import { Canvas } from 'canvas';
 import helpers from './helpers';
 import effects from './effects';
 

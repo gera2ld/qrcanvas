@@ -3,47 +3,16 @@ const gulp = require('gulp');
 const log = require('fancy-log');
 const rollup = require('rollup');
 const del = require('del');
-const babel = require('rollup-plugin-babel');
-const replace = require('rollup-plugin-replace');
-const resolve = require('rollup-plugin-node-resolve');
-const commonjs = require('rollup-plugin-commonjs');
 const { uglify } = require('rollup-plugin-uglify');
-const pkg = require('./package.json');
+const { getRollupPlugins, getExternal } = require('./scripts/util');
 
 const DIST = 'lib';
-const IS_PROD = process.env.NODE_ENV === 'production';
-const values = {
-  'process.env.VERSION': pkg.version,
-  'process.env.NODE_ENV': process.env.NODE_ENV || 'development',
-};
-
-const getRollupPlugins = ({ babelConfig, browser } = {}) => [
-  babel({
-    exclude: 'node_modules/**',
-    ...browser ? {
-      // Combine all helpers at the top of the bundle
-      externalHelpers: true,
-    } : {
-      // Require helpers from '@babel/runtime'
-      runtimeHelpers: true,
-      plugins: [
-        '@babel/plugin-transform-runtime',
-      ],
-    },
-    ...babelConfig,
-  }),
-  replace({ values }),
-  resolve(),
-  commonjs(),
-];
-const getExternal = (externals = []) => id => {
-  return id.startsWith('@babel/runtime/') || externals.includes(id);
-};
+const FILENAME = 'qrcanvas';
 
 const rollupConfig = [
   {
     input: {
-      input: 'src/index.js',
+      input: 'src/index.ts',
       plugins: getRollupPlugins(),
       external: getExternal([
         'qrcode-generator',
@@ -51,12 +20,37 @@ const rollupConfig = [
     },
     output: {
       format: 'cjs',
-      file: `${DIST}/qrcanvas.common.js`,
+      file: `${DIST}/${FILENAME}.common.js`,
     },
   },
   {
     input: {
-      input: 'src/node.js',
+      input: 'src/index.ts',
+      plugins: getRollupPlugins(),
+      external: getExternal([
+        'qrcode-generator',
+      ]),
+    },
+    output: {
+      format: 'esm',
+      file: `${DIST}/${FILENAME}.esm.js`,
+    },
+  },
+  {
+    input: {
+      input: 'src/index.ts',
+      plugins: getRollupPlugins({ browser: true }),
+    },
+    output: {
+      format: 'umd',
+      file: `${DIST}/${FILENAME}.js`,
+      name: 'qrcanvas',
+    },
+    minify: true,
+  },
+  {
+    input: {
+      input: 'src/node.ts',
       plugins: getRollupPlugins(),
       external: getExternal([
         'qrcode-generator',
@@ -65,20 +59,8 @@ const rollupConfig = [
     },
     output: {
       format: 'cjs',
-      file: `${DIST}/qrcanvas.node.js`,
+      file: `${DIST}/${FILENAME}.node.js`,
     },
-  },
-  {
-    input: {
-      input: 'src/index.js',
-      plugins: getRollupPlugins({ browser: true }),
-    },
-    output: {
-      format: 'umd',
-      file: `${DIST}/qrcanvas.js`,
-      name: 'qrcanvas',
-    },
-    minify: true,
   },
 ];
 // Generate minified versions
@@ -101,7 +83,7 @@ Array.from(rollupConfig)
 });
 
 function clean() {
-  return del(DIST);
+  return del([DIST, 'types']);
 }
 
 function buildJs() {

@@ -40,7 +40,7 @@ function renderRound({
   cellSize,
   isDark,
   count,
-}, maskOptions) {
+}, maskOptions: QRCanvasEffect) {
   const { getCanvas, drawCanvas, cacheCanvas } = helpers;
   const width = cellSize * count;
   const canvasMask = getCanvas({ width });
@@ -78,7 +78,7 @@ function renderFusion({
   cellSize,
   isDark,
   count,
-}, maskOptions) {
+}, maskOptions: QRCanvasEffect) {
   const { getCanvas, drawCanvas, cacheCanvas } = helpers;
   const width = cellSize * count;
   const canvasMask = getCanvas({ width });
@@ -191,7 +191,7 @@ function renderSpot({
   cellSize,
   isDark,
   count,
-}, maskOptions) {
+}, maskOptions: QRCanvasEffect) {
   const { getCanvas, drawCanvas, cacheCanvas } = helpers;
   const width = cellSize * count;
   const canvasMask = getCanvas({ width });
@@ -212,7 +212,7 @@ function renderSpot({
     drawCells({ cellSize, count }, ({
       i, j, x, y,
     }) => {
-      if (isDark(i, j) ^ !item.dark) {
+      if (isDark(i, j) ^ +!item.dark) {
         let fillSize;
         if (
           i <= 7 && j <= 7

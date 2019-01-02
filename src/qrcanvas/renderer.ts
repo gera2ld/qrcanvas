@@ -5,71 +5,27 @@ import effects from '../util/effects';
 // Enable UTF_8 support
 qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
 
-const DEFAULT_PROPS = {
+const DEFAULTS: QRCanvasOptions = {
   typeNumber: 0,
   correctLevel: 'L',
   data: '',
 };
 
-export default class QRCanvasRenderer {
-  options = { ...DEFAULT_PROPS };
+interface QRCanvasRendererCache {
+  qr?: any;
+  count?: number;
+}
 
-  cache = {};
+export default class QRCanvasRenderer {
+  private options: QRCanvasOptions = { ...DEFAULTS };
+
+  private cache: QRCanvasRendererCache = {};
 
   constructor(options) {
     this.setOptions(options);
   }
 
-  setOptions(options) {
-    this.options = {
-      ...this.options,
-      ...options,
-    };
-    this.normalizeEffect();
-    this.normalizeLogo();
-    const { typeNumber, data, logo } = this.options;
-    // L / M / Q / H
-    let { correctLevel } = this.options;
-    if (logo && ['Q', 'H'].indexOf(correctLevel) < 0) correctLevel = 'H';
-    const qr = qrcode(typeNumber, correctLevel);
-    qr.addData(data || '');
-    qr.make();
-    const count = qr.getModuleCount();
-    this.cache = {
-      qr,
-      count,
-    };
-  }
-
-  normalizeEffect() {
-    let { effect } = this.options;
-    if (typeof effect === 'string') {
-      effect = { type: effect };
-    }
-    this.options.effect = effect || {};
-  }
-
-  normalizeLogo() {
-    const { isDrawable, drawText } = helpers;
-    let { logo } = this.options;
-    if (logo) {
-      if (isDrawable(logo)) {
-        logo = { image: logo };
-      } else if (!isDrawable(logo.image)) {
-        if (typeof logo === 'string') {
-          logo = { text: logo };
-        }
-        if (typeof logo.text === 'string') {
-          logo = { image: drawText(logo.text, logo.options) };
-        } else {
-          logo = null;
-        }
-      }
-    }
-    this.options.logo = logo;
-  }
-
-  render(canvas, config = {}) {
+  public render(canvas, config: QRCanvasRenderConfig = {}) {
     const {
       background = 'white',
       foreground = 'black',
@@ -111,7 +67,7 @@ export default class QRCanvasRenderer {
       }, this.options.effect);
       // draw logo
       if (logo) {
-        const logoLayer = { ...logo };
+        const logoLayer: QRCanvasLayer = { ...logo };
         if (!logo.w && !logo.h && !logo.cols && !logo.rows) {
           const { width, height } = logo.image;
           const imageRatio = width / height;
@@ -140,7 +96,56 @@ export default class QRCanvasRenderer {
     return canvasOut;
   }
 
-  isDark = (i, j) => {
+  private setOptions(options) {
+    this.options = {
+      ...this.options,
+      ...options,
+    };
+    this.normalizeEffect();
+    this.normalizeLogo();
+    const { typeNumber, data, logo } = this.options;
+    // L / M / Q / H
+    let { correctLevel } = this.options;
+    if (logo && ['Q', 'H'].indexOf(correctLevel) < 0) correctLevel = 'H';
+    const qr = qrcode(typeNumber, correctLevel);
+    qr.addData(data || '');
+    qr.make();
+    const count = qr.getModuleCount();
+    this.cache = {
+      qr,
+      count,
+    };
+  }
+
+  private normalizeEffect() {
+    let { effect } = this.options;
+    if (typeof effect === 'string') {
+      effect = { type: effect };
+    }
+    this.options.effect = effect || {};
+  }
+
+  private normalizeLogo() {
+    const { isDrawable, drawText } = helpers;
+    let { logo } = this.options;
+    if (logo) {
+      if (isDrawable(logo)) {
+        logo = { image: logo };
+      } else if (!isDrawable(logo.image)) {
+        if (typeof logo === 'string') {
+          logo = { text: logo };
+        }
+        if (typeof logo.text === 'string') {
+          logo = { image: drawText(logo.text, logo.options) };
+        } else {
+          logo = null;
+        }
+      }
+    }
+    this.options.logo = logo;
+  }
+
+  private isDark = (i, j) => {
     const { qr, count } = this.cache;
     if (i < 0 || i >= count || j < 0 || j >= count) return false;
     return qr.isDark(i, j);

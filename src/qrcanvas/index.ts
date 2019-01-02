@@ -1,6 +1,6 @@
 import QRCanvasRenderer from './renderer';
 
-export default function qrcanvas(options) {
+export function qrcanvas(options: QRCanvasOptions) {
   const {
     canvas,
     size,

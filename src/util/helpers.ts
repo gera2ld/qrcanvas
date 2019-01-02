@@ -1,13 +1,14 @@
 import { COLOR_BLACK, COLOR_WHITE } from './consts';
 
 const cache = [];
-const notImplemented = () => {
+const notImplemented: any = (...args: any[]) => {
   throw new Error('Not implemented');
 };
+
 const helpers = {
-  createCanvas: notImplemented,
-  isCanvas: notImplemented,
-  isDrawable: notImplemented,
+  createCanvas: notImplemented as () => any,
+  isCanvas: notImplemented as (el) => boolean,
+  isDrawable: notImplemented as (el) => boolean,
   getCanvas,
   cacheCanvas,
   drawCanvas,
@@ -15,13 +16,19 @@ const helpers = {
 };
 export default helpers;
 
+interface GetCanvasOptions {
+  width?: number;
+  height?: number;
+  canvas?: any;
+}
+
 /**
  * @desc Create a new canvas.
  * @param {Int} width Width of the canvas.
  * @param {Int} height Height of the canvas.
  * @return {Canvas}
  */
-function getCanvas({ width, height, canvas } = {}) {
+function getCanvas({ width, height, canvas }: GetCanvasOptions = {}) {
   const rCanvas = canvas || helpers.createCanvas();
   if (width) {
     rCanvas.width = width;
@@ -34,6 +41,12 @@ function cacheCanvas(...args) {
   cache.push(...args);
 }
 
+interface DrawCanvasOptions {
+  cellSize?: number;
+  context?: any;
+  clear?: boolean;
+}
+
 /**
  * @desc Draw to the canvas with given image or colors.
  * @param {Canvas} canvas The canvas to initialize.
@@ -42,10 +55,10 @@ function cacheCanvas(...args) {
  *    cellSize: {Int}
  *    clear: {Boolean}
  */
-function drawCanvas(canvas, data, options) {
-  const { cellSize, context, clear = true } = options || {};
+function drawCanvas(canvas, data: QRCanvasLayerValue, options: DrawCanvasOptions = {}) {
+  const { cellSize, context, clear = true } = options;
   const { width, height } = canvas;
-  let queue = [data];
+  let queue: QRCanvasLayerValue = [data];
   const ctx = context || canvas.getContext('2d');
   if (clear) ctx.clearRect(0, 0, width, height);
   ctx.globalCompositeOperation = 'source-over';
@@ -79,12 +92,12 @@ function drawCanvas(canvas, data, options) {
   return canvas;
 }
 
-function drawText(text, options) {
+function drawText(text, options: QRCanvasDrawTextOptions = {}) {
   const {
     fontSize = 64,
     fontStyle = '', // italic bold
     fontFamily = 'Cursive',
-    color,
+    color = null,
     pad = 8,
     padColor = COLOR_WHITE,
     // mode = 0: add outline with padColor to pixels
