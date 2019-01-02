@@ -1,4 +1,5 @@
 import QRCanvasRenderer from './renderer';
+import { QRCanvasOptions } from '../types';
 
 export function qrcanvas(options: QRCanvasOptions) {
   const {

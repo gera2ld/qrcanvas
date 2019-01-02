@@ -1,6 +1,14 @@
-declare module 'canvas';
+export type TypeNumber =
+  | 0 // Automatic type number
+  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+  | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
+  | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30
+  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40
+  ;
 
-interface QRCanvasOptions {
+export type ErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H';
+
+export interface QRCanvasOptions {
   typeNumber?: TypeNumber;
   correctLevel?: ErrorCorrectionLevel;
   data?: string;
@@ -14,18 +22,18 @@ interface QRCanvasOptions {
   logo?: QRCanvasLayer;
 }
 
-interface QRCanvasRenderConfig {
+export interface QRCanvasRenderConfig {
   size?: number;
   cellSize?: number;
 }
 
-interface QRCanvasEffect {
+export interface QRCanvasEffect {
   type?: string;
   value?: number;
   foregroundLight?: string;
 }
 
-interface QRCanvasLayer {
+export interface QRCanvasLayer {
   w?: number;
   h?: number;
   cols?: number;
@@ -37,7 +45,7 @@ interface QRCanvasLayer {
   options?: QRCanvasDrawTextOptions;
 }
 
-interface QRCanvasDrawTextOptions {
+export interface QRCanvasDrawTextOptions {
   fontSize?: number;
   fontStyle?: string;
   fontFamily?: string;
@@ -47,5 +55,5 @@ interface QRCanvasDrawTextOptions {
   mode?: number;
 }
 
-type QRCanvasLayerValue = string | QRCanvasLayer | QRCanvasLayerArray;
+export type QRCanvasLayerValue = string | QRCanvasLayer | QRCanvasLayerArray;
 interface QRCanvasLayerArray extends Array<QRCanvasLayerValue> {}

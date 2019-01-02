@@ -1,4 +1,5 @@
 import { COLOR_BLACK, COLOR_WHITE } from './consts';
+import { QRCanvasLayerValue, QRCanvasDrawTextOptions } from '../types';
 
 const cache = [];
 const notImplemented: any = (...args: any[]) => {

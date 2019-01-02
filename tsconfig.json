@@ -9,7 +9,6 @@
     "allowSyntheticDefaultImports": true
   },
   "files": [
-    "src/index.ts",
-    "src/index.d.ts"
+    "src/index.ts"
   ]
 }

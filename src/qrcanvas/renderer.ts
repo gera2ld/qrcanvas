@@ -1,6 +1,7 @@
 import qrcode from 'qrcode-generator';
 import helpers from '../util/helpers';
 import effects from '../util/effects';
+import { QRCanvasOptions, QRCanvasRenderConfig, QRCanvasLayer } from '../types';
 
 // Enable UTF_8 support
 qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];

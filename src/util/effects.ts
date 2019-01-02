@@ -1,5 +1,6 @@
 import helpers from './helpers';
 import { COLOR_BLACK, COLOR_WHITE } from './consts';
+import { QRCanvasEffect } from '../types';
 
 export default {
   default: renderDefault,
