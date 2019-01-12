@@ -15,8 +15,8 @@ export interface QRCanvasOptions {
   canvas?: any;
   size?: number;
   cellSize?: number;
-  background?: string;
-  foreground?: string;
+  background?: QRCanvasLayerValue;
+  foreground?: QRCanvasLayerValue;
   padding?: number;
   effect?: QRCanvasEffect;
   logo?: QRCanvasLayer;
