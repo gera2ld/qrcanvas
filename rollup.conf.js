@@ -1,22 +1,20 @@
-const path = require('path');
-const gulp = require('gulp');
-const log = require('fancy-log');
 const rollup = require('rollup');
-const del = require('del');
 const { uglify } = require('rollup-plugin-uglify');
-const { getRollupPlugins, getExternal } = require('./scripts/util');
+const { getRollupPlugins, getExternal, DIST } = require('./scripts/util');
+const pkg = require('./package.json');
 
-const DIST = 'lib';
 const FILENAME = 'qrcanvas';
+const BANNER = `/*! ${pkg.name} v${pkg.version} | ${pkg.license} License */`;
 
+const external = getExternal([
+  'qrcode-generator',
+]);
 const rollupConfig = [
   {
     input: {
       input: 'src/index.ts',
       plugins: getRollupPlugins(),
-      external: getExternal([
-        'qrcode-generator',
-      ]),
+      external,
     },
     output: {
       format: 'cjs',
@@ -27,9 +25,7 @@ const rollupConfig = [
     input: {
       input: 'src/index.ts',
       plugins: getRollupPlugins(),
-      external: getExternal([
-        'qrcode-generator',
-      ]),
+      external,
     },
     output: {
       format: 'esm',
@@ -64,15 +60,20 @@ const rollupConfig = [
   },
 ];
 // Generate minified versions
-Array.from(rollupConfig)
-.filter(({ minify }) => minify)
+rollupConfig.filter(({ minify }) => minify)
 .forEach(config => {
   rollupConfig.push({
     input: {
       ...config.input,
       plugins: [
         ...config.input.plugins,
-        uglify(),
+        uglify({
+          output: {
+            ...BANNER && {
+              preamble: BANNER,
+            },
+          },
+        }),
       ],
     },
     output: {
@@ -82,32 +83,17 @@ Array.from(rollupConfig)
   });
 });
 
-function clean() {
-  return del([DIST, 'types']);
-}
+rollupConfig.forEach((item) => {
+  item.output = {
+    indent: false,
+    ...item.output,
+    ...BANNER && {
+      banner: BANNER,
+    },
+  };
+});
 
-function buildJs() {
-  return Promise.all(rollupConfig.map(config => {
-    return rollup.rollup(config.input)
-    .then(bundle => bundle.write(config.output));
-  }));
-}
-
-function wrapError(handle) {
-  const wrapped = () => handle()
-  .catch(err => {
-    log(err.toString());
-  });
-  wrapped.displayName = handle.name;
-  return wrapped;
-}
-
-function watch() {
-  gulp.watch('src/**', safeBuildJs);
-}
-
-const safeBuildJs = wrapError(buildJs);
-
-exports.clean = clean;
-exports.build = buildJs;
-exports.dev = gulp.series(safeBuildJs, watch);
+module.exports = rollupConfig.map(({ input, output }) => ({
+  ...input,
+  output,
+}));

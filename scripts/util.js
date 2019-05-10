@@ -9,7 +9,7 @@ const pkg = require('../package.json');
 const values = {
   'process.env.VERSION': pkg.version,
 };
-const extensions = ['.ts', '.js'];
+const extensions = ['.ts', '.tsx', '.js'];
 
 const rollupPluginMap = {
   alias: aliases => alias(aliases),
@@ -33,9 +33,6 @@ const rollupPluginMap = {
   commonjs: () => commonjs(),
 };
 
-exports.getRollupPlugins = getRollupPlugins;
-exports.getExternal = getExternal;
-
 function getRollupPlugins({ babelConfig, browser, aliases } = {}) {
   return [
     aliases && rollupPluginMap.alias(aliases),
@@ -49,3 +46,7 @@ function getRollupPlugins({ babelConfig, browser, aliases } = {}) {
 function getExternal(externals = []) {
   return id => id.startsWith('@babel/runtime/') || externals.includes(id);
 }
+
+exports.getRollupPlugins = getRollupPlugins;
+exports.getExternal = getExternal;
+exports.DIST = 'lib';
