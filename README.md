@@ -30,12 +30,10 @@ Quick Start
 
 * Use in browser
 
-  You can either build the code or get released files from <https://unpkg.com>.
-
   ``` html
   <div id="qrcode"></div>
 
-  <script src="https://unpkg.com/qrcanvas/lib/qrcanvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcanvas@3"></script>
   ```
 
   ``` js
