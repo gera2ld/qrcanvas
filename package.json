@@ -60,5 +60,8 @@
   "dependencies": {
     "@babel/runtime": "^7.4.4",
     "qrcode-generator": "^1.4.3"
+  },
+  "optionalDependencies": {
+    "canvas": "^2.6.0"
   }
 }
