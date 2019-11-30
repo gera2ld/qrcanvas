@@ -1,3 +1,7 @@
 .form-horizontal {
   width: 480px;
 }
+
+canvas {
+  border: 1px solid #999;
+}

@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/spectre.css@0.5.8/dist/spectre.min.css">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcanvas@3.0.4/lib/qrcanvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcanvas@3.0.5/lib/qrcanvas.min.js"></script>
 <script>
 var _hmt = _hmt || [];
 (function() {
@@ -41,6 +41,14 @@ var _hmt = _hmt || [];
         </div>
         <div class="column">
           <input class="form-input input-sm" type="range" min="2" max="25" v-model="settings.cellSize">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="column col-3">
+          <div class="form-label label-sm">Padding:</div>
+        </div>
+        <div class="column">
+          <input class="form-input input-sm" type="range" min="0" max="16" v-model="settings.padding">
         </div>
       </div>
       <div class="form-group">

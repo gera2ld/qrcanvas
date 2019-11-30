@@ -53,6 +53,7 @@ const data = {
   settings: Object.assign({
     qrtext: 'https://gerald.top',
     cellSize: 6,
+    padding: 0,
     effect: '',
     effectValue: 100,
     logo: false,
@@ -92,6 +93,7 @@ new Vue({
       } = settings;
       const options = {
         cellSize: +settings.cellSize,
+        padding: +settings.padding,
         foreground: [
           // foreground color
           { style: colorFore },
