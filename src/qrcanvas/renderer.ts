@@ -78,6 +78,7 @@ export default class QRCanvasRenderer {
           const imageRatio = width / height;
           const posRatio = Math.min((count - 18) / count, 0.38);
           const h = Math.min(
+            height,
             sketchSize * posRatio,
             sketchSize * posRatio / imageRatio,
           );
