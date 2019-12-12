@@ -13,17 +13,14 @@ const extensions = ['.ts', '.tsx', '.js'];
 
 const rollupPluginMap = {
   alias: aliases => alias(aliases),
-  babel: ({ babelConfig, browser }) => babel({
-    ...browser ? {
-      // Combine all helpers at the top of the bundle
-      externalHelpers: true,
-    } : {
-      // Require helpers from '@babel/runtime'
-      runtimeHelpers: true,
-      plugins: [
-        '@babel/plugin-transform-runtime',
-      ],
-    },
+  babel: ({ babelConfig, esm }) => babel({
+    // Require helpers from '@babel/runtime'
+    runtimeHelpers: true,
+    plugins: [
+      ['@babel/plugin-transform-runtime', {
+        useESModules: esm,
+      }],
+    ],
     exclude: 'node_modules/**',
     extensions,
     ...babelConfig,
@@ -33,10 +30,10 @@ const rollupPluginMap = {
   commonjs: () => commonjs(),
 };
 
-function getRollupPlugins({ babelConfig, browser, aliases } = {}) {
+function getRollupPlugins({ babelConfig, esm, aliases } = {}) {
   return [
     aliases && rollupPluginMap.alias(aliases),
-    rollupPluginMap.babel({ babelConfig, browser }),
+    rollupPluginMap.babel({ babelConfig, esm }),
     rollupPluginMap.replace(),
     rollupPluginMap.resolve(),
     rollupPluginMap.commonjs(),
@@ -44,7 +41,7 @@ function getRollupPlugins({ babelConfig, browser, aliases } = {}) {
 }
 
 function getExternal(externals = []) {
-  return id => id.startsWith('@babel/runtime/') || externals.includes(id);
+  return id => /^@babel\/runtime[-/]/.test(id) || externals.includes(id);
 }
 
 exports.getRollupPlugins = getRollupPlugins;

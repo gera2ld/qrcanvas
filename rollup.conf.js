@@ -24,7 +24,7 @@ const rollupConfig = [
   {
     input: {
       input: 'src/index.ts',
-      plugins: getRollupPlugins(),
+      plugins: getRollupPlugins({ esm: true }),
       external,
     },
     output: {
@@ -35,7 +35,7 @@ const rollupConfig = [
   {
     input: {
       input: 'src/index.ts',
-      plugins: getRollupPlugins({ browser: true }),
+      plugins: getRollupPlugins({ esm: true }),
     },
     output: {
       format: 'umd',
