@@ -6,7 +6,8 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "outDir": "types",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react"
   },
   "files": [
     "src/index.ts",

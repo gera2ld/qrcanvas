@@ -11,57 +11,82 @@ Based on [Kazuhiko Arase's QRCode](http://www.d-project.com/).
 The only requirement is that the browser works with a `canvas`,
 which is supported by most modern browsers.
 
-## Installation
+## Usage
 
-``` sh
+### With bundlers
+
+Install as a dependency:
+
+```sh
 $ yarn add qrcanvas
+# or
+$ npm install qrcanvas -S
 ```
 
-## Quick Start
+Use as a module:
 
-* Use in modules
+``` js
+import { qrcanvas } from 'qrcanvas';
 
-  ``` js
-  import { qrcanvas } from 'qrcanvas';
-  ```
+const canvas = qrcanvas.qrcanvas({
+  data: 'hello, world'
+});
+document.body.appendChild(canvas);
+```
 
-* Use in browser
+### Browser
 
-  ``` html
-  <div id="qrcode"></div>
+Load from CDN:
 
-  <script src="https://cdn.jsdelivr.net/npm/qrcanvas@3"></script>
-  ```
+``` html
+<div id="qrcode"></div>
 
-  ``` js
-  const canvas = qrcanvas.qrcanvas({
-    data: 'hello, world'
-  });
-  document.getElementById('qrcode').appendChild(canvas);
-  ```
+<script src="https://cdn.jsdelivr.net/npm/qrcanvas@3"></script>
+```
 
-* Use in Node.js
+The module is mounted to a global variable named `qrcanvas`:
 
-  [node-canvas](https://github.com/Automattic/node-canvas) is required in Node.js.
+``` js
+const canvas = qrcanvas.qrcanvas({
+  data: 'hello, world'
+});
+document.getElementById('qrcode').appendChild(canvas);
+```
 
-  ``` js
-  const fs = require('fs');
-  const { qrcanvas } = require('qrcanvas/lib/qrcanvas.node.js');
-  const canvas = qrcanvas({
-    data: 'hello, world'
-  });
-  // canvas is an instance of `node-canvas`
-  canvas.pngStream().pipe(fs.createWriteStream('qrcode.png'));
-  ```
+### Node.js
 
-## More
+[node-canvas](https://github.com/Automattic/node-canvas) is required in Node.js.
+
+Install dependencies:
+
+```sh
+$ yarn add qrcanvas canvas
+```
+
+``` js
+const fs = require('fs');
+const { qrcanvas, setCanvasModule } = require('qrcanvas');
+
+// Enable node-canvas
+setCanvasModule(require('canvas'));
+
+const canvas = qrcanvas({
+  data: 'hello, world'
+});
+// canvas is an instance of `node-canvas`
+canvas.pngStream().pipe(fs.createWriteStream('qrcode.png'));
+```
+
+## Documents
 
 - [Docs](https://github.com/gera2ld/qrcanvas/wiki)
 - [Demo](https://gera2ld.github.io/qrcanvas/)
 - [Examples](https://gera2ld.github.io/qrcanvas/examples/)
-- Use with other libraries
-  - [qrcanvas-vue](https://github.com/gera2ld/qrcanvas-vue)
-  - [qrcanvas-react](https://github.com/gera2ld/qrcanvas-react)
+
+## Related
+
+- [qrcanvas-vue](https://github.com/gera2ld/qrcanvas-vue)
+- [qrcanvas-react](https://github.com/gera2ld/qrcanvas-react)
 
 ## Snapshots
 
