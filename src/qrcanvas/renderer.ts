@@ -41,7 +41,7 @@ export default class QRCanvasRenderer {
     const {
       count,
     } = this.cache;
-    const { getCanvas, drawCanvas, cacheCanvas } = helpers;
+    const { drawCanvas } = helpers;
     let { size } = config;
     let canvasOut;
     let canvasBg;
@@ -52,7 +52,7 @@ export default class QRCanvasRenderer {
       if (!canvas && !cellSize && !size) cellSize = 6;
       if (cellSize) size = count * cellSize;
       if (size) {
-        canvasOut = getCanvas({ canvas, width: size });
+        canvasOut = helpers.updateCanvas(canvas, size);
       } else {
         size = canvas.width;
         canvasOut = canvas;
@@ -62,7 +62,7 @@ export default class QRCanvasRenderer {
     {
       const cellSize = Math.ceil(size / count);
       const sketchSize = cellSize * count;
-      canvasBg = getCanvas({ width: cellSize * count });
+      canvasBg = helpers.getCanvas(cellSize * count);
       drawCanvas(canvasBg, background, { cellSize });
       canvasFg = onRender({
         foreground,
@@ -74,7 +74,7 @@ export default class QRCanvasRenderer {
       if (logo) {
         const logoLayer: QRCanvasLayer = { ...logo };
         if (!logo.w && !logo.h && !logo.cols && !logo.rows) {
-          const { width, height } = logo.image;
+          const { width, height } = logo.image as { width: number; height: number };
           const imageRatio = width / height;
           const posRatio = Math.min((count - 18) / count, 0.38);
           const h = Math.min(
@@ -105,7 +105,6 @@ export default class QRCanvasRenderer {
         h: contentSize,
       },
     ]);
-    cacheCanvas(canvasBg, canvasFg);
     return canvasOut;
   }
 
@@ -143,7 +142,7 @@ export default class QRCanvasRenderer {
     let { logo } = this.options;
     if (logo) {
       if (isDrawable(logo)) {
-        logo = { image: logo };
+        logo = { image: logo as CanvasImageSource };
       } else if (!isDrawable(logo.image)) {
         if (typeof logo === 'string') {
           logo = { text: logo };

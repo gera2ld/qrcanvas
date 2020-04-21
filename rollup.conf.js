@@ -44,20 +44,6 @@ const rollupConfig = [
     },
     minify: true,
   },
-  {
-    input: {
-      input: 'src/node.ts',
-      plugins: getRollupPlugins(),
-      external: getExternal([
-        'qrcode-generator',
-        'canvas',
-      ]),
-    },
-    output: {
-      format: 'cjs',
-      file: `${DIST}/${FILENAME}.node.js`,
-    },
-  },
 ];
 // Generate minified versions
 rollupConfig.filter(({ minify }) => minify)

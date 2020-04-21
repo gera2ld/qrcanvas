@@ -15,9 +15,9 @@ function renderDefault({
   isDark,
   count,
 }) {
-  const { getCanvas, drawCanvas, cacheCanvas } = helpers;
+  const { getCanvas, drawCanvas } = helpers;
   const width = cellSize * count;
-  const canvasMask = getCanvas({ width });
+  const canvasMask = getCanvas(width);
   const context = canvasMask.getContext('2d');
   context.fillStyle = COLOR_BLACK;
   drawCells({ cellSize, count }, ({
@@ -27,12 +27,11 @@ function renderDefault({
       context.fillRect(x, y, cellSize, cellSize);
     }
   });
-  const canvasFg = getCanvas({ width });
+  const canvasFg = getCanvas(width);
   drawCanvas(canvasFg, foreground, { cellSize });
   const ctx = canvasFg.getContext('2d');
   ctx.globalCompositeOperation = 'destination-in';
   ctx.drawImage(canvasMask, 0, 0);
-  cacheCanvas(canvasMask);
   return canvasFg;
 }
 
@@ -42,9 +41,9 @@ function renderRound({
   isDark,
   count,
 }, maskOptions: QRCanvasEffect) {
-  const { getCanvas, drawCanvas, cacheCanvas } = helpers;
+  const { getCanvas, drawCanvas } = helpers;
   const width = cellSize * count;
-  const canvasMask = getCanvas({ width });
+  const canvasMask = getCanvas(width);
   const {
     value = 1,
   } = maskOptions;
@@ -65,12 +64,11 @@ function renderRound({
       context.fill();
     }
   });
-  const canvasFg = getCanvas({ width });
+  const canvasFg = getCanvas(width);
   drawCanvas(canvasFg, foreground, { cellSize });
   const ctx = canvasFg.getContext('2d');
   ctx.globalCompositeOperation = 'destination-in';
   ctx.drawImage(canvasMask, 0, 0);
-  cacheCanvas(canvasMask);
   return canvasFg;
 }
 
@@ -80,9 +78,9 @@ function renderFusion({
   isDark,
   count,
 }, maskOptions: QRCanvasEffect) {
-  const { getCanvas, drawCanvas, cacheCanvas } = helpers;
+  const { getCanvas, drawCanvas } = helpers;
   const width = cellSize * count;
-  const canvasMask = getCanvas({ width });
+  const canvasMask = getCanvas(width);
   const context = canvasMask.getContext('2d');
   context.fillStyle = COLOR_BLACK;
   const {
@@ -178,12 +176,11 @@ function renderFusion({
       }
     }
   });
-  const canvasFg = getCanvas({ width });
+  const canvasFg = getCanvas(width);
   drawCanvas(canvasFg, foreground, { cellSize });
   const ctx = canvasFg.getContext('2d');
   ctx.globalCompositeOperation = 'destination-in';
   ctx.drawImage(canvasMask, 0, 0);
-  cacheCanvas(canvasMask);
   return canvasFg;
 }
 
@@ -193,16 +190,16 @@ function renderSpot({
   isDark,
   count,
 }, maskOptions: QRCanvasEffect) {
-  const { getCanvas, drawCanvas, cacheCanvas } = helpers;
+  const { getCanvas, drawCanvas } = helpers;
   const width = cellSize * count;
-  const canvasMask = getCanvas({ width });
+  const canvasMask = getCanvas(width);
   const {
     value,
     foregroundLight = COLOR_WHITE,
   } = maskOptions;
   const context = canvasMask.getContext('2d');
-  const canvasLayer = getCanvas({ width });
-  const canvasFg = getCanvas({ width });
+  const canvasLayer = getCanvas(width);
+  const canvasFg = getCanvas(width);
   const ctxLayer = canvasLayer.getContext('2d');
   [
     { dark: true, foreground },
@@ -214,7 +211,7 @@ function renderSpot({
       i, j, x, y,
     }) => {
       if (isDark(i, j) ^ +!item.dark) {
-        let fillSize;
+        let fillSize: number;
         if (
           i <= 7 && j <= 7
           || i <= 7 && count - j - 1 <= 7
@@ -241,7 +238,6 @@ function renderSpot({
     ctxLayer.drawImage(canvasMask, 0, 0);
     drawCanvas(canvasFg, canvasLayer, { cellSize, clear: false });
   });
-  cacheCanvas(canvasMask, canvasLayer);
   return canvasFg;
 }
 

@@ -1,26 +1,30 @@
 import { COLOR_BLACK, COLOR_WHITE } from './consts';
-import { QRCanvasLayerValue, QRCanvasDrawTextOptions } from '../types';
-
-const cache = [];
-const notImplemented: any = (...args: any[]) => {
-  throw new Error('Not implemented');
-};
+import { QRCanvasLayerValue, QRCanvasDrawTextOptions, QRCanvasLayer } from '../types';
 
 const helpers = {
-  createCanvas: notImplemented as () => any,
-  isCanvas: notImplemented as (el) => boolean,
-  isDrawable: notImplemented as (el) => boolean,
+  createCanvas,
+  isCanvas,
+  isDrawable,
   getCanvas,
-  cacheCanvas,
+  updateCanvas,
   drawCanvas,
   drawText,
 };
 export default helpers;
 
-interface GetCanvasOptions {
-  width?: number;
-  height?: number;
-  canvas?: any;
+function createCanvas(width: number, height: number): HTMLCanvasElement {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  return canvas;
+}
+
+function isCanvas(el: QRCanvasLayerValue): boolean {
+  return el instanceof HTMLCanvasElement;
+}
+
+function isDrawable(el: QRCanvasLayerValue): boolean {
+  return isCanvas(el) || el instanceof HTMLImageElement;
 }
 
 /**
@@ -29,17 +33,17 @@ interface GetCanvasOptions {
  * @param {Int} height Height of the canvas.
  * @return {Canvas}
  */
-function getCanvas({ width, height, canvas }: GetCanvasOptions = {}) {
-  const rCanvas = canvas || helpers.createCanvas();
-  if (width) {
-    rCanvas.width = width;
-    rCanvas.height = height == null ? width : height;
-  }
-  return rCanvas;
+function getCanvas(width: number, height?: number): HTMLCanvasElement {
+  return helpers.createCanvas(width, height == null ? width : height);
 }
 
-function cacheCanvas(...args) {
-  cache.push(...args);
+function updateCanvas(canvas: HTMLCanvasElement, width: number, height?: number): HTMLCanvasElement {
+  if (canvas) {
+    canvas.width = width;
+    canvas.height = height == null ? width : height;
+    return canvas;
+  }
+  return getCanvas(width, height);
 }
 
 interface DrawCanvasOptions {
@@ -56,10 +60,10 @@ interface DrawCanvasOptions {
  *    cellSize: {Int}
  *    clear: {Boolean}
  */
-function drawCanvas(canvas, data: QRCanvasLayerValue, options: DrawCanvasOptions = {}) {
+function drawCanvas(canvas: HTMLCanvasElement, data: QRCanvasLayerValue, options: DrawCanvasOptions = {}): HTMLCanvasElement {
   const { cellSize, context, clear = true } = options;
   const { width, height } = canvas;
-  let queue: QRCanvasLayerValue = [data];
+  let queue: QRCanvasLayerValue[] = [data];
   const ctx = context || canvas.getContext('2d');
   if (clear) ctx.clearRect(0, 0, width, height);
   ctx.globalCompositeOperation = 'source-over';
@@ -68,16 +72,16 @@ function drawCanvas(canvas, data: QRCanvasLayerValue, options: DrawCanvasOptions
     if (Array.isArray(item)) {
       queue = item.concat(queue);
     } else if (item) {
-      let obj;
+      let obj: QRCanvasLayer;
       if (helpers.isDrawable(item)) {
-        obj = { image: item };
+        obj = { image: item as CanvasImageSource };
       } else if (typeof item === 'string') {
         obj = { style: item };
       } else {
-        obj = item;
+        obj = item as QRCanvasLayer;
       }
-      let x = ('col' in obj ? obj.col * cellSize : obj.x) || 0;
-      let y = ('row' in obj ? obj.row * cellSize : obj.y) || 0;
+      let x = (obj.col == null ? obj.x : obj.col * cellSize) || 0;
+      let y = (obj.row == null ? obj.y : obj.row * cellSize) || 0;
       if (x < 0) x += width;
       if (y < 0) y += width;
       const w = ('cols' in obj ? obj.cols * cellSize : obj.w) || width;
@@ -93,7 +97,7 @@ function drawCanvas(canvas, data: QRCanvasLayerValue, options: DrawCanvasOptions
   return canvas;
 }
 
-function drawText(text, options: QRCanvasDrawTextOptions = {}) {
+function drawText(text: string, options?: QRCanvasDrawTextOptions): HTMLCanvasElement {
   const {
     fontSize = 64,
     fontStyle = '', // italic bold
@@ -105,9 +109,9 @@ function drawText(text, options: QRCanvasDrawTextOptions = {}) {
     // mode = 1: make a rect with padColor as background
     mode = 1,
   } = options || {};
-  const canvas = getCanvas();
+  const canvas = getCanvas(1);
   const ctx = canvas.getContext('2d');
-  let padColorArr;
+  let padColorArr: Uint8ClampedArray;
   if (padColor) {
     ctx.fillStyle = padColor;
     ctx.fillRect(0, 0, 1, 1);
@@ -120,7 +124,7 @@ function drawText(text, options: QRCanvasDrawTextOptions = {}) {
     `${fontSize}px`,
     fontFamily,
   ].filter(Boolean).join(' ');
-  const resetContext = () => {
+  const resetContext = (): void => {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = font;
@@ -130,7 +134,7 @@ function drawText(text, options: QRCanvasDrawTextOptions = {}) {
   canvas.width = width;
   canvas.height = height;
   resetContext();
-  const fillText = () => {
+  const fillText = (): void => {
     ctx.fillStyle = color || COLOR_BLACK;
     ctx.fillText(text, width / 2, height / 2);
   };

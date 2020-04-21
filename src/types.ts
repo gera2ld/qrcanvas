@@ -12,7 +12,7 @@ export interface QRCanvasOptions {
   typeNumber?: TypeNumber;
   correctLevel?: ErrorCorrectionLevel;
   data?: string;
-  canvas?: any;
+  canvas?: HTMLCanvasElement;
   size?: number;
   cellSize?: number;
   background?: QRCanvasLayerValue;
@@ -40,8 +40,11 @@ export interface QRCanvasLayer {
   rows?: number;
   x?: number;
   y?: number;
-  image?: any;
+  col?: number;
+  row?: number;
+  image?: CanvasImageSource;
   text?: string;
+  style?: string;
   options?: QRCanvasDrawTextOptions;
 }
 
@@ -55,5 +58,5 @@ export interface QRCanvasDrawTextOptions {
   mode?: number;
 }
 
-export type QRCanvasLayerValue = string | QRCanvasLayer | QRCanvasLayerArray;
-interface QRCanvasLayerArray extends Array<QRCanvasLayerValue> {}
+export type QRCanvasLayerValue = string | CanvasImageSource | QRCanvasLayer | QRCanvasLayerArray;
+type QRCanvasLayerArray = QRCanvasLayerValue[];
