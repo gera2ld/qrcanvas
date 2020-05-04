@@ -1,11 +1,11 @@
-const { terser } = require('rollup-plugin-terser');
-const { getRollupPlugins, getExternal, DIST } = require('./scripts/util');
+const { getRollupPlugins, getRollupExternal, defaultOptions, rollupMinify } = require('@gera2ld/plaid');
 const pkg = require('./package.json');
 
+const DIST = 'lib';
 const FILENAME = 'qrcanvas';
 const BANNER = `/*! ${pkg.name} v${pkg.version} | ${pkg.license} License */`;
 
-const external = getExternal([
+const external = getRollupExternal([
   'qrcode-generator',
 ]);
 const bundleOptions = {
@@ -16,7 +16,9 @@ const rollupConfig = [
   {
     input: {
       input: 'src/index.ts',
-      plugins: getRollupPlugins(),
+      plugins: getRollupPlugins({
+        extensions: defaultOptions.extensions,
+      }),
       external,
     },
     output: {
@@ -27,7 +29,10 @@ const rollupConfig = [
   {
     input: {
       input: 'src/index.ts',
-      plugins: getRollupPlugins({ esm: true }),
+      plugins: getRollupPlugins({
+        esm: true,
+        extensions: defaultOptions.extensions,
+      }),
       external,
     },
     output: {
@@ -38,7 +43,10 @@ const rollupConfig = [
   {
     input: {
       input: 'src/index.ts',
-      plugins: getRollupPlugins({ esm: true }),
+      plugins: getRollupPlugins({
+        esm: true,
+        extensions: defaultOptions.extensions,
+      }),
     },
     output: {
       format: 'iife',
@@ -52,19 +60,7 @@ const rollupConfig = [
 // Generate minified versions
 rollupConfig.filter(({ minify }) => minify)
 .forEach(config => {
-  rollupConfig.push({
-    input: {
-      ...config.input,
-      plugins: [
-        ...config.input.plugins,
-        terser(),
-      ],
-    },
-    output: {
-      ...config.output,
-      file: config.output.file.replace(/\.js$/, '.min.js'),
-    },
-  });
+  rollupConfig.push(rollupMinify(config));
 });
 
 rollupConfig.forEach((item) => {
