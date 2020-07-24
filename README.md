@@ -28,7 +28,7 @@ Use as a module:
 ``` js
 import { qrcanvas } from 'qrcanvas';
 
-const canvas = qrcanvas.qrcanvas({
+const canvas = qrcanvas({
   data: 'hello, world'
 });
 document.body.appendChild(canvas);
