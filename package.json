@@ -41,14 +41,14 @@
     "types"
   ],
   "devDependencies": {
-    "@gera2ld/plaid": "~2.0.0",
-    "@gera2ld/plaid-common-ts": "^2.0.2",
-    "@gera2ld/plaid-rollup": "~2.0.0",
-    "del-cli": "^3.0.0",
-    "husky": "^4.2.5"
+    "@gera2ld/plaid": "~2.0.7",
+    "@gera2ld/plaid-common-ts": "~2.1.2",
+    "@gera2ld/plaid-rollup": "~2.1.1",
+    "del-cli": "^3.0.1",
+    "husky": "^4.3.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.9.6",
+    "@babel/runtime": "^7.11.2",
     "qrcode-generator": "^1.4.4"
   }
 }

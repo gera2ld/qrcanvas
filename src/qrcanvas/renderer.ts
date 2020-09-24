@@ -163,5 +163,5 @@ export default class QRCanvasRenderer {
     const { qr, count } = this.cache;
     if (i < 0 || i >= count || j < 0 || j >= count) return false;
     return qr.isDark(i, j);
-  }
+  };
 }

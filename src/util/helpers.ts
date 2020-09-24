@@ -37,7 +37,11 @@ function getCanvas(width: number, height?: number): HTMLCanvasElement {
   return helpers.createCanvas(width, height == null ? width : height);
 }
 
-function updateCanvas(canvas: HTMLCanvasElement, width: number, height?: number): HTMLCanvasElement {
+function updateCanvas(
+  canvas: HTMLCanvasElement,
+  width: number,
+  height?: number,
+): HTMLCanvasElement {
   if (canvas) {
     canvas.width = width;
     canvas.height = height == null ? width : height;
@@ -60,7 +64,11 @@ interface DrawCanvasOptions {
  *    cellSize: {Int}
  *    clear: {Boolean}
  */
-function drawCanvas(canvas: HTMLCanvasElement, data: QRCanvasLayerValue, options: DrawCanvasOptions = {}): HTMLCanvasElement {
+function drawCanvas(
+  canvas: HTMLCanvasElement,
+  data: QRCanvasLayerValue,
+  options: DrawCanvasOptions = {},
+): HTMLCanvasElement {
   const { cellSize, context, clear = true } = options;
   const { width, height } = canvas;
   let queue: QRCanvasLayerValue[] = [data];
