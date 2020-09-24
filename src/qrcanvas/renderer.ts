@@ -13,6 +13,7 @@ const DEFAULTS: QRCanvasOptions = {
   correctLevel: 'L',
   data: '',
   padding: 0,
+  resize: true,
 };
 
 interface QRCanvasRendererCache {
@@ -36,6 +37,7 @@ export default class QRCanvasRenderer {
       padding,
       effect,
       logo,
+      resize,
     } = this.options;
     const onRender = effects[effect.type] || effects.default;
     const {
@@ -52,7 +54,7 @@ export default class QRCanvasRenderer {
       if (!canvas && !cellSize && !size) cellSize = 6;
       if (cellSize) size = count * cellSize + padding + padding;
       if (size) {
-        canvasOut = helpers.updateCanvas(canvas, size);
+        canvasOut = resize || !canvas ? helpers.updateCanvas(canvas, size) : canvas;
       } else {
         size = canvas.width;
         canvasOut = canvas;

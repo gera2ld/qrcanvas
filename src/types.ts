@@ -20,6 +20,10 @@ export interface QRCanvasOptions {
   padding?: number;
   effect?: QRCanvasEffect;
   logo?: QRCanvasLayer;
+  /**
+   * Whether to resize the canvas to size of QRCode on render
+   */
+  resize?: boolean;
 }
 
 export interface QRCanvasRenderConfig {
