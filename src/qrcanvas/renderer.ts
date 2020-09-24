@@ -50,7 +50,7 @@ export default class QRCanvasRenderer {
     {
       let { cellSize } = config;
       if (!canvas && !cellSize && !size) cellSize = 6;
-      if (cellSize) size = count * cellSize;
+      if (cellSize) size = count * cellSize + padding + padding;
       if (size) {
         canvasOut = helpers.updateCanvas(canvas, size);
       } else {
@@ -58,9 +58,10 @@ export default class QRCanvasRenderer {
         canvasOut = canvas;
       }
     }
+    const contentSize = size - padding - padding;
     // Create foreground and background layers on canvas
     {
-      const cellSize = Math.ceil(size / count);
+      const cellSize = Math.ceil(contentSize / count);
       const sketchSize = cellSize * count;
       canvasBg = helpers.getCanvas(cellSize * count);
       drawCanvas(canvasBg, background, { cellSize });
@@ -94,7 +95,6 @@ export default class QRCanvasRenderer {
       }
     }
     // Combine the layers
-    const contentSize = size - padding - padding;
     drawCanvas(canvasOut, [
       { image: canvasBg },
       {
