@@ -1,7 +1,9 @@
 import qrcode from 'qrcode-generator';
 import helpers from '../util/helpers';
 import effects from '../util/effects';
-import { QRCanvasOptions, QRCanvasRenderConfig, QRCanvasLayer } from '../types';
+import {
+  QRCanvasOptions, QRCanvasRenderConfig, QRCanvasTextLayer, QRCanvasImageLayer, QRCanvasLayerValue,
+} from '../types';
 
 // Enable UTF_8 support
 qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
@@ -26,17 +28,18 @@ export default class QRCanvasRenderer {
 
   private cache: QRCanvasRendererCache = {};
 
-  constructor(options) {
+  private logo?: QRCanvasImageLayer;
+
+  constructor(options: Partial<QRCanvasOptions>) {
     this.setOptions(options);
   }
 
-  public render(canvas, config: QRCanvasRenderConfig = {}) {
+  public render(canvas: HTMLCanvasElement | undefined, config: QRCanvasRenderConfig = {}) {
     const {
       background,
       foreground,
       padding,
       effect,
-      logo,
       resize,
     } = this.options;
     const onRender = effects[effect.type] || effects.default;
@@ -45,9 +48,9 @@ export default class QRCanvasRenderer {
     } = this.cache;
     const { drawCanvas } = helpers;
     let { size } = config;
-    let canvasOut;
-    let canvasBg;
-    let canvasFg;
+    let canvasOut: HTMLCanvasElement;
+    let canvasBg: HTMLCanvasElement;
+    let canvasFg: HTMLCanvasElement;
     // Prepare output canvas, resize it if cellSize or size is provided.
     {
       let { cellSize } = config;
@@ -74,8 +77,8 @@ export default class QRCanvasRenderer {
         ...this.cache,
       }, this.options.effect);
       // draw logo
-      if (logo) {
-        const logoLayer: QRCanvasLayer = { ...logo };
+      if (this.logo) {
+        const logo: QRCanvasImageLayer = { ...this.logo };
         if (!logo.w && !logo.h && !logo.cols && !logo.rows) {
           const { width, height } = logo.image as { width: number; height: number };
           const imageRatio = width / height;
@@ -88,12 +91,12 @@ export default class QRCanvasRenderer {
           const w = h * imageRatio;
           const x = (sketchSize - w) / 2;
           const y = (sketchSize - h) / 2;
-          logoLayer.w = w;
-          logoLayer.h = h;
-          logoLayer.x = x;
-          logoLayer.y = y;
+          logo.w = w;
+          logo.h = h;
+          logo.x = x;
+          logo.y = y;
         }
-        drawCanvas(canvasFg, logoLayer, { clear: false });
+        drawCanvas(canvasFg, logo, { clear: false });
       }
     }
     // Combine the layers
@@ -110,7 +113,7 @@ export default class QRCanvasRenderer {
     return canvasOut;
   }
 
-  private setOptions(options) {
+  private setOptions(options: Partial<QRCanvasOptions>) {
     this.options = {
       ...this.options,
       ...options,
@@ -141,25 +144,29 @@ export default class QRCanvasRenderer {
 
   private normalizeLogo() {
     const { isDrawable, drawText } = helpers;
-    let { logo } = this.options;
+    const { logo } = this.options;
     if (logo) {
-      if (isDrawable(logo)) {
-        logo = { image: logo as CanvasImageSource };
-      } else if (!isDrawable(logo.image)) {
+      if (isDrawable(logo as QRCanvasLayerValue)) {
+        this.logo = { image: logo as CanvasImageSource };
+      } else if ((logo as QRCanvasImageLayer).image) {
+        this.logo = logo as QRCanvasImageLayer;
+      } else {
+        let textLogo: QRCanvasTextLayer;
         if (typeof logo === 'string') {
-          logo = { text: logo };
+          textLogo = { text: logo };
+        } else if ((logo as QRCanvasTextLayer).text) {
+          textLogo = logo as QRCanvasTextLayer;
         }
-        if (typeof logo.text === 'string') {
-          logo = { image: drawText(logo.text, logo.options) };
+        if (textLogo?.text) {
+          this.logo = { image: drawText(textLogo.text, textLogo.options) };
         } else {
-          logo = null;
+          this.logo = null;
         }
       }
     }
-    this.options.logo = logo;
   }
 
-  private isDark = (i, j) => {
+  private isDark = (i: number, j: number) => {
     const { qr, count } = this.cache;
     if (i < 0 || i >= count || j < 0 || j >= count) return false;
     return qr.isDark(i, j);

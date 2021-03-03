@@ -1,5 +1,7 @@
 import { COLOR_BLACK, COLOR_WHITE } from './consts';
-import { QRCanvasLayerValue, QRCanvasDrawTextOptions, QRCanvasLayer } from '../types';
+import {
+  QRCanvasLayerValue, QRCanvasDrawTextOptions, QRCanvasLayer, QRCanvasImageLayer, QRCanvasFillLayer,
+} from '../types';
 
 const helpers = {
   createCanvas,
@@ -10,6 +12,7 @@ const helpers = {
   drawCanvas,
   drawText,
 };
+export type QRCanvasHelpers = typeof helpers;
 export default helpers;
 
 function createCanvas(width: number, height: number): HTMLCanvasElement {
@@ -27,12 +30,6 @@ function isDrawable(el: QRCanvasLayerValue): boolean {
   return isCanvas(el) || el instanceof HTMLImageElement;
 }
 
-/**
- * @desc Create a new canvas.
- * @param {Int} width Width of the canvas.
- * @param {Int} height Height of the canvas.
- * @return {Canvas}
- */
 function getCanvas(width: number, height?: number): HTMLCanvasElement {
   return helpers.createCanvas(width, height == null ? width : height);
 }
@@ -57,12 +54,8 @@ interface DrawCanvasOptions {
 }
 
 /**
- * @desc Draw to the canvas with given image or colors.
- * @param {Canvas} canvas The canvas to initialize.
- * @param {Image | String | Array} data
- * @param {Object} options
- *    cellSize: {Int}
- *    clear: {Boolean}
+ * Paint to a canvas with given image or colors.
+ * @param canvas The canvas to paint.
  */
 function drawCanvas(
   canvas: HTMLCanvasElement,
@@ -94,10 +87,10 @@ function drawCanvas(
       if (y < 0) y += width;
       const w = ('cols' in obj ? obj.cols * cellSize : obj.w) || width;
       const h = ('rows' in obj ? obj.rows * cellSize : obj.h) || width;
-      if (obj.image) {
-        ctx.drawImage(obj.image, x, y, w, h);
-      } else {
-        ctx.fillStyle = obj.style || 'black';
+      if ((obj as QRCanvasImageLayer).image) {
+        ctx.drawImage((obj as QRCanvasImageLayer).image, x, y, w, h);
+      } else if ((obj as QRCanvasFillLayer).style) {
+        ctx.fillStyle = (obj as QRCanvasFillLayer).style || 'black';
         ctx.fillRect(x, y, w, h);
       }
     }

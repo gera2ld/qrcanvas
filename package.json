@@ -11,14 +11,16 @@
   },
   "scripts": {
     "dev": "rollup -wc rollup.conf.js",
-    "prebuild": "npm run ci && npm run clean",
-    "build": "tsc && npm run build:js",
-    "lint": "eslint --ext .ts .",
-    "deploy": "gh-pages -d demo",
-    "prepublishOnly": "npm run build",
-    "clean": "del lib types",
+    "build:types": "tsc",
     "build:js": "rollup -c rollup.conf.js",
-    "ci": "npm run lint"
+    "build": "run-s ci clean build:types build:js",
+    "lint": "eslint --ext .ts .",
+    "build:docs": "typedoc --out demo/docs src/index.ts",
+    "gh-pages": "gh-pages -fd demo",
+    "deploy": "run-s build:docs gh-pages",
+    "prepublishOnly": "npm run build",
+    "clean": "del-cli lib types",
+    "ci": "run-s lint"
   },
   "title": "QRCanvas",
   "repository": {
@@ -41,11 +43,13 @@
     "types"
   ],
   "devDependencies": {
-    "@gera2ld/plaid": "~2.0.7",
-    "@gera2ld/plaid-common-ts": "~2.1.2",
-    "@gera2ld/plaid-rollup": "~2.1.1",
+    "@gera2ld/plaid": "~2.2.2",
+    "@gera2ld/plaid-common-ts": "~2.2.0",
+    "@gera2ld/plaid-rollup": "~2.2.0",
     "del-cli": "^3.0.1",
-    "husky": "^4.3.0"
+    "gh-pages": "^3.1.0",
+    "husky": "^4.3.0",
+    "typedoc": "^0.20.28"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",

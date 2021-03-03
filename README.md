@@ -79,8 +79,8 @@ canvas.pngStream().pipe(fs.createWriteStream('qrcode.png'));
 
 ## Documents
 
-- [Docs](https://github.com/gera2ld/qrcanvas/wiki)
 - [Demo](https://gera2ld.github.io/qrcanvas/)
+- [Docs](https://gera2ld.github.io/qrcanvas/docs/)
 - [Examples](https://gera2ld.github.io/qrcanvas/examples/)
 
 ## Related
