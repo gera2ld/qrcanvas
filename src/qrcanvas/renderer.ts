@@ -19,7 +19,7 @@ const DEFAULTS: QRCanvasOptions = {
 };
 
 interface QRCanvasRendererCache {
-  qr?: any;
+  qr?: ReturnType<typeof qrcode>;
   count?: number;
 }
 

@@ -1,6 +1,11 @@
 import { COLOR_BLACK, COLOR_WHITE } from './consts';
 import {
-  QRCanvasLayerValue, QRCanvasDrawTextOptions, QRCanvasLayer, QRCanvasImageLayer, QRCanvasFillLayer,
+  QRCanvasLayerValue,
+  QRCanvasDrawTextOptions,
+  QRCanvasLayer,
+  QRCanvasImageLayer,
+  QRCanvasFillLayer,
+  DrawCanvasOptions,
 } from '../types';
 
 const helpers = {
@@ -37,7 +42,7 @@ function getCanvas(width: number, height?: number): HTMLCanvasElement {
 function updateCanvas(
   canvas: HTMLCanvasElement,
   width: number,
-  height?: number,
+  height?: number
 ): HTMLCanvasElement {
   if (canvas) {
     canvas.width = width;
@@ -47,20 +52,13 @@ function updateCanvas(
   return getCanvas(width, height);
 }
 
-interface DrawCanvasOptions {
-  cellSize?: number;
-  context?: any;
-  clear?: boolean;
-}
-
 /**
  * Paint to a canvas with given image or colors.
- * @param canvas The canvas to paint.
  */
 function drawCanvas(
   canvas: HTMLCanvasElement,
   data: QRCanvasLayerValue,
-  options: DrawCanvasOptions = {},
+  options: DrawCanvasOptions = {}
 ): HTMLCanvasElement {
   const { cellSize, context, clear = true } = options;
   const { width, height } = canvas;
@@ -98,7 +96,10 @@ function drawCanvas(
   return canvas;
 }
 
-function drawText(text: string, options?: QRCanvasDrawTextOptions): HTMLCanvasElement {
+function drawText(
+  text: string,
+  options?: QRCanvasDrawTextOptions
+): HTMLCanvasElement {
   const {
     fontSize = 64,
     fontStyle = '', // italic bold
@@ -120,11 +121,9 @@ function drawText(text: string, options?: QRCanvasDrawTextOptions): HTMLCanvasEl
     if (!padColorArr[3]) padColorArr = null;
   }
   const height = fontSize + 2 * pad;
-  const font = [
-    fontStyle,
-    `${fontSize}px`,
-    fontFamily,
-  ].filter(Boolean).join(' ');
+  const font = [fontStyle, `${fontSize}px`, fontFamily]
+    .filter(Boolean)
+    .join(' ');
   const resetContext = (): void => {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -161,14 +160,14 @@ function drawText(text: string, options?: QRCanvasDrawTextOptions): HTMLCanvasEl
           last = [];
           for (let i = 0; i < total; i += 1) last.push(i);
         }
-        last.forEach(i => {
+        last.forEach((i) => {
           if (data[4 * i + 3]) {
             [
               i % width ? i - 1 : -1,
               (i + 1) % width ? i + 1 : -1,
               i - width,
               i + width,
-            ].forEach(j => {
+            ].forEach((j) => {
               const k = 4 * j;
               if (k >= 0 && k <= data.length && !unique[j]) {
                 unique[j] = 1;
@@ -177,7 +176,7 @@ function drawText(text: string, options?: QRCanvasDrawTextOptions): HTMLCanvasEl
             });
           }
         });
-        current.forEach(i => {
+        current.forEach((i) => {
           const j = 4 * i;
           if (!data[j + 3]) {
             for (let k = 0; k < 4; k += 1) {
