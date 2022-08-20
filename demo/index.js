@@ -51,7 +51,7 @@ const correctLevels = ['L', 'M', 'Q', 'H'];
 
 const data = {
   settings: Object.assign({
-    qrtext: 'https://gerald.top',
+    qrtext: 'https://gerald.win',
     cellSize: 6,
     padding: 0,
     effect: '',
