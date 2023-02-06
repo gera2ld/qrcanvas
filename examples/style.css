@@ -1,0 +1,30 @@
+#root > .d-flex {
+  height: 100vh;
+}
+#root h2 {
+  margin-top: .5em;
+  margin-left: .5em;
+}
+#root > .d-flex > :first-child {
+  width: 12rem;
+  background: #f8f9fa;
+}
+#content {
+  flex: 1;
+  width: 0;
+  padding: 1em;
+  overflow: auto;
+}
+#content canvas {
+  border: 1px solid #eee;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+.flex-auto {
+  flex: auto;
+}
+.flex-column > .flex-auto {
+  height: 0;
+}
